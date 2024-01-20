@@ -15,18 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(BossBarHud.class)
-public class BossBarHudMixin {
+public class BossbarHudMixin {
 
     @Shadow @Final private MinecraftClient client;
 
     private final List<ItemStack> armorHud_armorItems = new ArrayList<>(4);
 
     @ModifyVariable(method = "render", at = @At(value = "STORE", ordinal = 0), ordinal = 1)
-    public int anInt(int a) {
+    public int calculateOffset(int offset) {
         ArmorHudConfig currentConfig = this.armorHud_getCurrentArmorHudConfig();
         if (currentConfig.isEnabled() && currentConfig.getPushBossbars()) {
             int add = 0;
-            if (currentConfig.getAnchor() == ArmorHudConfig.Anchor.TOP_CENTER) {
+            if (currentConfig.getAnchor() == ArmorHudConfig.Anchor.Top_Center) {
                 int amount = 0;
                 PlayerEntity playerEntity = this.getCameraPlayer();
                 if (playerEntity != null) {
@@ -34,12 +34,19 @@ public class BossBarHudMixin {
                     for (ItemStack itemStack : playerEntity.getInventory().armor) {
                         if (!itemStack.isEmpty())
                             amount++;
-                        if (!itemStack.isEmpty() || currentConfig.getWidgetShown() != ArmorHudConfig.WidgetShown.NOT_EMPTY)
+                        if (!itemStack.isEmpty() || currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Equipped)
                             this.armorHud_armorItems.add(itemStack);
                     }
 
-                    if (amount > 0 || currentConfig.getWidgetShown() == ArmorHudConfig.WidgetShown.ALWAYS) {
-                        add += 22 + currentConfig.getOffsetY();
+                    if (!(amount == 0 && currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Always)) {
+                        if (currentConfig.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
+                            if (currentConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Equipped)
+                                add += 22 + 20 * (amount - 1) + currentConfig.getOffsetY();
+                            else
+                                add += 82 + currentConfig.getOffsetY();
+                        }
+                        else
+                            add += 22 + currentConfig.getOffsetY();
                         if (currentConfig.isWarningShown() && this.armorHud_armorItems.stream().anyMatch((ItemStack itemStack) -> {
                             if (itemStack.isDamageable()) {
                                 final int damage = itemStack.getDamage();
@@ -48,17 +55,19 @@ public class BossBarHudMixin {
                             }
                             return false;
                         })) {
-                            add += 2 + 8;
-                            if (currentConfig.getWarningIconBobbingIntervalMs() != 0.0F) {
-                                add += 7;
+                            if (currentConfig.getOrientation() == ArmorHudConfig.Orientation.Horizontal) {
+                                    add += 2 + 8;
+                                if (currentConfig.getWarningIconBobbingIntervalMs() != 0.0F) {
+                                    add += 7;
+                                }
                             }
                         }
                     }
                 }
             }
-            return a + Math.max(add, 0);
+            return offset + Math.max(add, 0);
         } else
-            return a;
+            return offset;
     }
 
     /**

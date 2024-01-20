@@ -2,15 +2,16 @@
   "schemaVersion": 1,
   "id": "armor_hud",
   "version": "${version}",
-  "name": "BerdinskiyBear's ArmorHUD",
-  "description": "This mod adds a minimalistic vanilla-like widget that shows your armor items and a warning if durability is low enough.",
+  "name": "Slotted Armor HUD",
+  "description": "This mod adds an armor HUD that retains Minecraft's default appearance.",
   "authors": [
-    "BerdinskiyBear"
+    "BerdinskiyBear",
+    "poq"
   ],
   "contributors": [],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/berdinskiybears-armor-hud",
-    "issues": "https://github.com/BerdinskiyBear/armor-hud/issues"
+    "homepage": "https://github.com/poqli/armor-hud",
+    "issues": "https://github.com/poqli/armor-hud/issues"
   },
   "license": "MIT",
   "icon": "assets/armor_hud/icon.png",
@@ -30,12 +31,12 @@
   ],
   "depends": {
     "fabricloader": ">=0.14.18",
-    "minecraft": "~1.19",
+    "minecraft": ">=1.20",
     "java": ">=17"
   },
   "recommends": {
     "fabric-resource-loader-v0": "*",
-    "cloth-config2": ">=10.0.96",
-    "modmenu": ">=6.1"
+    "cloth-config2": ">=11.1.118",
+    "modmenu": ">=7.2.2"
   }
 }

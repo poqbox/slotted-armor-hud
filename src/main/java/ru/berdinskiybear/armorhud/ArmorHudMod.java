@@ -8,7 +8,7 @@ import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
 
 public final class ArmorHudMod {
     public static final String MOD_ID = "armor_hud";
-    public static final String MOD_NAME = "BerdinskiyBear's ArmorHUD";
+    public static final String MOD_NAME = "Slotted Armor HUD";
 
     public static final String FABRIC_RESOURCE_LOADER_ID = "fabric-resource-loader-v0";
     public static final String CLOTH_CONFIG_ID = "cloth-config2";

@@ -13,18 +13,19 @@ import java.io.IOException;
 public class ArmorHudConfig {
 
     protected boolean enabled;
-    protected Anchor anchor;
     protected Side side;
+    protected Anchor anchor;
+    protected Orientation orientation;
+    protected OffhandSlotBehavior offhandSlotBehavior;
     protected int offsetX;
     protected int offsetY;
     protected Style style;
-    protected WidgetShown widgetShown;
-    protected OffhandSlotBehavior offhandSlotBehavior;
+    protected SlotsShown slotsShown;
+    protected boolean emptyIconsShown;
+    protected boolean reversed;
     protected boolean pushBossbars;
     protected boolean pushStatusEffectIcons;
     protected boolean pushSubtitles;
-    protected boolean reversed;
-    protected boolean iconsShown;
     protected boolean warningShown;
     protected int minDurabilityValue;
     protected double minDurabilityPercentage;
@@ -32,38 +33,40 @@ public class ArmorHudConfig {
 
     public ArmorHudConfig() {
         this.enabled = true;
-        this.anchor = Anchor.HOTBAR;
-        this.side = Side.LEFT;
+        this.side = Side.Left;
+        this.anchor = Anchor.Hotbar;
+        this.orientation = Orientation.Horizontal;
+        this.offhandSlotBehavior = OffhandSlotBehavior.Leave_Space;
         this.offsetX = 0;
         this.offsetY = 0;
-        this.style = Style.STYLE_1_E;
-        this.widgetShown = WidgetShown.NOT_EMPTY;
-        this.offhandSlotBehavior = OffhandSlotBehavior.ADHERE;
+        this.style = Style.Rounded_Corners;
+        this.slotsShown = SlotsShown.Equipped;
+        this.emptyIconsShown = true;
+        this.reversed = false;
         this.pushBossbars = true;
         this.pushStatusEffectIcons = true;
         this.pushSubtitles = true;
-        this.reversed = true;
-        this.iconsShown = true;
-        this.warningShown = true;
-        this.minDurabilityValue = 5;
-        this.minDurabilityPercentage = 0.05D;
+        this.warningShown = false;
+        this.minDurabilityValue = 10;
+        this.minDurabilityPercentage = 0.115D;
         this.warningIconBobbingIntervalMs = 2000.0F;
     }
 
     public ArmorHudConfig(ArmorHudConfig original) {
         this.enabled = original.enabled;
-        this.anchor = original.anchor;
         this.side = original.side;
+        this.anchor = original.anchor;
+        this.orientation = original.orientation;
+        this.offhandSlotBehavior = original.offhandSlotBehavior;
         this.offsetX = original.offsetX;
         this.offsetY = original.offsetY;
         this.style = original.style;
-        this.widgetShown = original.widgetShown;
-        this.offhandSlotBehavior = original.offhandSlotBehavior;
+        this.slotsShown = original.slotsShown;
+        this.emptyIconsShown = original.emptyIconsShown;
+        this.reversed = original.reversed;
         this.pushBossbars = original.pushBossbars;
         this.pushStatusEffectIcons = original.pushStatusEffectIcons;
         this.pushSubtitles = original.pushSubtitles;
-        this.reversed = original.reversed;
-        this.iconsShown = original.iconsShown;
         this.warningShown = original.warningShown;
         this.minDurabilityValue = original.minDurabilityValue;
         this.minDurabilityPercentage = original.minDurabilityPercentage;
@@ -112,12 +115,18 @@ public class ArmorHudConfig {
         return enabled;
     }
 
+    public Side getSide() {
+        return side;
+    }
+
     public Anchor getAnchor() {
         return anchor;
     }
 
-    public Side getSide() {
-        return side;
+    public Orientation getOrientation() { return orientation; }
+
+    public OffhandSlotBehavior getOffhandSlotBehavior() {
+        return offhandSlotBehavior;
     }
 
     public int getOffsetX() {
@@ -132,12 +141,16 @@ public class ArmorHudConfig {
         return style;
     }
 
-    public WidgetShown getWidgetShown() {
-        return widgetShown;
+    public SlotsShown getSlotsShown() {
+        return slotsShown;
     }
 
-    public OffhandSlotBehavior getOffhandSlotBehavior() {
-        return offhandSlotBehavior;
+    public boolean getEmptyIconsShown() {
+        return emptyIconsShown;
+    }
+
+    public boolean isReversed() {
+        return reversed;
     }
 
     public boolean getPushBossbars() {
@@ -150,14 +163,6 @@ public class ArmorHudConfig {
 
     public boolean getPushSubtitles() {
         return this.pushSubtitles;
-    }
-
-    public boolean isReversed() {
-        return reversed;
-    }
-
-    public boolean getIconsShown() {
-        return iconsShown;
     }
 
     public boolean isWarningShown() {
@@ -176,38 +181,39 @@ public class ArmorHudConfig {
         return warningIconBobbingIntervalMs;
     }
 
-    public enum Anchor {
-        TOP_CENTER,
-        TOP,
-        BOTTOM,
-        HOTBAR
+    public enum Side {
+        Left,
+        Right
     }
 
-    public enum Side {
-        RIGHT,
-        LEFT
+    public enum Anchor {
+        Bottom,
+        Hotbar,
+        Top,
+        Top_Center
+    }
+
+    public enum Orientation {
+        Horizontal,
+        Vertical
     }
 
     public enum OffhandSlotBehavior {
-        ALWAYS_IGNORE,
-        ADHERE,
-        ALWAYS_LEAVE_SPACE
-    }
-
-    public enum WidgetShown {
-        ALWAYS,
-        IF_ANY_PRESENT,
-        NOT_EMPTY
+        Leave_Space,
+        Adhere,
+        Ignore
     }
 
     public enum Style {
-        STYLE_1_E,
-        STYLE_1_H,
-        STYLE_1_S,
-        STYLE_2_E,
-        STYLE_2_H,
-        STYLE_2_S,
-        STYLE_3
+        Squared_Corners,
+        Rounded_Corners,
+        Rounded_Slots
+    }
+
+    public enum SlotsShown {
+        Always,
+        All,
+        Equipped
     }
 
     public static class MutableConfig extends ArmorHudConfig {
@@ -224,12 +230,20 @@ public class ArmorHudConfig {
             this.enabled = enabled;
         }
 
+        public void setSide(Side side) {
+            this.side = side;
+        }
+
         public void setAnchor(Anchor anchor) {
             this.anchor = anchor;
         }
 
-        public void setSide(Side side) {
-            this.side = side;
+        public void setOrientation(Orientation orientation) {
+            this.orientation = orientation;
+        }
+
+        public void setOffhandSlotBehavior(OffhandSlotBehavior offhandSlotBehavior) {
+            this.offhandSlotBehavior = offhandSlotBehavior;
         }
 
         public void setOffsetX(int offsetX) {
@@ -244,12 +258,16 @@ public class ArmorHudConfig {
             this.style = style;
         }
 
-        public void setWidgetShown(WidgetShown widgetShown) {
-            this.widgetShown = widgetShown;
+        public void setSlotsShown(SlotsShown slotsShown) {
+            this.slotsShown = slotsShown;
         }
 
-        public void setOffhandSlotBehavior(OffhandSlotBehavior offhandSlotBehavior) {
-            this.offhandSlotBehavior = offhandSlotBehavior;
+        public void setEmptyIconsShown(boolean iconsShown) {
+            this.emptyIconsShown = iconsShown;
+        }
+
+        public void setReversed(boolean reversed) {
+            this.reversed = reversed;
         }
 
         public void setPushBossbars(boolean pushBossbars) {
@@ -262,14 +280,6 @@ public class ArmorHudConfig {
 
         public void setPushSubtitles(boolean pushSubtitles) {
             this.pushSubtitles = pushSubtitles;
-        }
-
-        public void setReversed(boolean reversed) {
-            this.reversed = reversed;
-        }
-
-        public void setIconsShown(boolean iconsShown) {
-            this.iconsShown = iconsShown;
         }
 
         public void setWarningShown(boolean warningShown) {
