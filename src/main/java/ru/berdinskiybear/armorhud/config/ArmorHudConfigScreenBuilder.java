@@ -73,17 +73,17 @@ public class ArmorHudConfigScreenBuilder {
                 .build();
         positionCategory.addEntry(enabledEntry);
 
-        sideEntry = configEntryBuilder
-                .startEnumSelector(Text.translatable("armorHud.configScreen.setting.side.name"), Side.class, ArmorHudMod.getCurrentConfig().getSide())
-                .setDefaultValue(defaultConfig.getSide())
-                .setTooltip(Text.translatable("armorHud.configScreen.setting.side.description"))
-                .setSaveConsumer((Side value) -> ArmorHudMod.temporaryConfig.setSide(value))
-                .setErrorSupplier((Side value) -> {
-                    ArmorHudMod.previewConfig.setSide(value);
+        orientationEntry = configEntryBuilder
+                .startEnumSelector(Text.translatable("armorHud.configScreen.setting.orientation.name"), Orientation.class, ArmorHudMod.getCurrentConfig().getOrientation())
+                .setDefaultValue(defaultConfig.getOrientation())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.orientation.description"))
+                .setSaveConsumer((Orientation value) -> ArmorHudMod.temporaryConfig.setOrientation(value))
+                .setErrorSupplier((Orientation value) -> {
+                    ArmorHudMod.previewConfig.setOrientation(value);
                     return Optional.empty();
                 })
                 .build();
-        positionCategory.addEntry(sideEntry);
+        positionCategory.addEntry(orientationEntry);
 
         anchorEntry = configEntryBuilder
                 .startEnumSelector(Text.translatable("armorHud.configScreen.setting.anchor.name"), Anchor.class, ArmorHudMod.getCurrentConfig().getAnchor())
@@ -97,17 +97,17 @@ public class ArmorHudConfigScreenBuilder {
                 .build();
         positionCategory.addEntry(anchorEntry);
 
-        orientationEntry = configEntryBuilder
-                .startEnumSelector(Text.translatable("armorHud.configScreen.setting.orientation.name"), Orientation.class, ArmorHudMod.getCurrentConfig().getOrientation())
-                .setDefaultValue(defaultConfig.getOrientation())
-                .setTooltip(Text.translatable("armorHud.configScreen.setting.orientation.description"))
-                .setSaveConsumer((Orientation value) -> ArmorHudMod.temporaryConfig.setOrientation(value))
-                .setErrorSupplier((Orientation value) -> {
-                    ArmorHudMod.previewConfig.setOrientation(value);
+        sideEntry = configEntryBuilder
+                .startEnumSelector(Text.translatable("armorHud.configScreen.setting.side.name"), Side.class, ArmorHudMod.getCurrentConfig().getSide())
+                .setDefaultValue(defaultConfig.getSide())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.side.description"))
+                .setSaveConsumer((Side value) -> ArmorHudMod.temporaryConfig.setSide(value))
+                .setErrorSupplier((Side value) -> {
+                    ArmorHudMod.previewConfig.setSide(value);
                     return Optional.empty();
                 })
                 .build();
-        positionCategory.addEntry(orientationEntry);
+        positionCategory.addEntry(sideEntry);
 
         offhandSlotBehaviorEntry = configEntryBuilder
                 .startEnumSelector(Text.translatable("armorHud.configScreen.setting.offhandSlot.name"), OffhandSlotBehavior.class, ArmorHudMod.getCurrentConfig().getOffhandSlotBehavior())

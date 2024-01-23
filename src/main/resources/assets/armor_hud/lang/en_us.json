@@ -5,9 +5,9 @@
   "armorHud.configScreen.category.durability": "Low-durability indicator",
 
   "armorHud.configScreen.setting.enable.name": "Enabled",
-  "armorHud.configScreen.setting.side.name": "Side",
-  "armorHud.configScreen.setting.anchor.name": "Anchor",
   "armorHud.configScreen.setting.orientation.name": "Orientation",
+  "armorHud.configScreen.setting.anchor.name": "Anchor",
+  "armorHud.configScreen.setting.side.name": "Side",
   "armorHud.configScreen.setting.offhandSlot.name": "Off-hand slot behaviour",
   "armorHud.configScreen.setting.offsetX.name": "X offset",
   "armorHud.configScreen.setting.offsetY.name": "Y offset",
@@ -17,16 +17,16 @@
   "armorHud.configScreen.setting.pushBossbars.name": "Push bossbar",
   "armorHud.configScreen.setting.pushStatusEffectIcons.name": "Push effect icons",
   "armorHud.configScreen.setting.pushSubtitles.name": "Push subtitles",
-  "armorHud.configScreen.setting.warningShown.name": "Show low durability warning",
+  "armorHud.configScreen.setting.warningShown.name": "Show low-durability warning",
   "armorHud.configScreen.setting.minDurabilityValue.name": "Minimum durability value",
   "armorHud.configScreen.setting.minDurabilityPercentage.name": "Minimum durability percentage",
   "armorHud.configScreen.setting.warningIconBobbingIntervalEntry.name": "Warning icon bobbing period",
-  "armorHud.configScreen.setting.style.name": "Armor HUD style",
+  "armorHud.configScreen.setting.style.name": "Style",
 
   "armorHud.configScreen.setting.enable.description": "Toggles the armor HUD.",
-  "armorHud.configScreen.setting.side.description": "Side that the widget is displayed on.\nWorks in conjunction with 'Anchor'.\n Left\n Right",
-  "armorHud.configScreen.setting.anchor.description": "Place that the widget is attached to.\nWorks in conjunction with 'Side'.\n Top\n Bottom\n Hotbar \n Top_Center",
   "armorHud.configScreen.setting.orientation.description": "Orientation of the widget.\n Horizontal\n Vertical",
+  "armorHud.configScreen.setting.anchor.description": "Place that the widget is attached to.\nWorks in conjunction with 'Side'.\n Top\n Bottom\n Hotbar \n Top_Center",
+  "armorHud.configScreen.setting.side.description": "Side that the widget is displayed on.\nWorks in conjunction with 'Anchor'.\n Left\n Right",
   "armorHud.configScreen.setting.offhandSlot.description": "Defines how the widget reacts to the \noffhand slot and the attack indicator.\n Leave_Space\n Adhere\n Ignore",
   "armorHud.configScreen.setting.offsetX.description": "Offsets the widget along the horizontal axis.",
   "armorHud.configScreen.setting.offsetY.description": "Offsets the widget along the vertical axis.",
@@ -40,5 +40,5 @@
   "armorHud.configScreen.setting.minDurabilityValue.description": "If an item's durability falls below this value, \na warning icon will be displayed.",
   "armorHud.configScreen.setting.minDurabilityPercentage.description": "If an item's durability falls below this percentage, \na warning icon will be displayed.",
   "armorHud.configScreen.setting.warningIconBobbingIntervalEntry.description": "Defines how quickly the warning icons \nwill move up and down.",
-  "armorHud.configScreen.setting.style.description": "Defines how the widget border is drawn.\n Squared_Corners\n Rounded_Corners\n Rounded_Slots"
+  "armorHud.configScreen.setting.style.description": "Defines how the widget border is drawn.\nResource packs work best with 'Squared Corners'.\n Squared_Corners\n Rounded_Corners\n Rounded_Slots"
 }

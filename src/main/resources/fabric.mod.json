@@ -1,20 +1,21 @@
 {
   "schemaVersion": 1,
   "id": "armor_hud",
-  "version": "${version}",
   "name": "Slotted Armor HUD",
-  "description": "This mod adds an armor HUD that retains Minecraft's default appearance.",
+  "icon": "assets/armor_hud/icon.png",
+  "version": "${version}",
+  "description": "Adds an armor HUD that retains Minecraft's default appearance.",
   "authors": [
     "BerdinskiyBear",
     "poq"
   ],
   "contributors": [],
+  "license": "MIT",
   "contact": {
     "homepage": "https://github.com/poqli/armor-hud",
+    "sources": "https://github.com/poqli/armor-hud",
     "issues": "https://github.com/poqli/armor-hud/issues"
   },
-  "license": "MIT",
-  "icon": "assets/armor_hud/icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [],

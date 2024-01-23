@@ -33,13 +33,13 @@ public class ArmorHudConfig {
 
     public ArmorHudConfig() {
         this.enabled = true;
-        this.side = Side.Left;
-        this.anchor = Anchor.Hotbar;
         this.orientation = Orientation.Horizontal;
+        this.anchor = Anchor.Hotbar;
+        this.side = Side.Left;
         this.offhandSlotBehavior = OffhandSlotBehavior.Leave_Space;
         this.offsetX = 0;
         this.offsetY = 0;
-        this.style = Style.Rounded_Corners;
+        this.style = Style.Squared_Corners;
         this.slotsShown = SlotsShown.Equipped;
         this.emptyIconsShown = true;
         this.reversed = false;
@@ -54,9 +54,9 @@ public class ArmorHudConfig {
 
     public ArmorHudConfig(ArmorHudConfig original) {
         this.enabled = original.enabled;
-        this.side = original.side;
-        this.anchor = original.anchor;
         this.orientation = original.orientation;
+        this.anchor = original.anchor;
+        this.side = original.side;
         this.offhandSlotBehavior = original.offhandSlotBehavior;
         this.offsetX = original.offsetX;
         this.offsetY = original.offsetY;
@@ -115,15 +115,17 @@ public class ArmorHudConfig {
         return enabled;
     }
 
-    public Side getSide() {
-        return side;
+    public Orientation getOrientation() {
+        return orientation;
     }
 
     public Anchor getAnchor() {
         return anchor;
     }
 
-    public Orientation getOrientation() { return orientation; }
+    public Side getSide() {
+        return side;
+    }
 
     public OffhandSlotBehavior getOffhandSlotBehavior() {
         return offhandSlotBehavior;
@@ -181,9 +183,9 @@ public class ArmorHudConfig {
         return warningIconBobbingIntervalMs;
     }
 
-    public enum Side {
-        Left,
-        Right
+    public enum Orientation {
+        Horizontal,
+        Vertical
     }
 
     public enum Anchor {
@@ -193,9 +195,9 @@ public class ArmorHudConfig {
         Top_Center
     }
 
-    public enum Orientation {
-        Horizontal,
-        Vertical
+    public enum Side {
+        Left,
+        Right
     }
 
     public enum OffhandSlotBehavior {
@@ -230,16 +232,16 @@ public class ArmorHudConfig {
             this.enabled = enabled;
         }
 
-        public void setSide(Side side) {
-            this.side = side;
+        public void setOrientation(Orientation orientation) {
+            this.orientation = orientation;
         }
 
         public void setAnchor(Anchor anchor) {
             this.anchor = anchor;
         }
 
-        public void setOrientation(Orientation orientation) {
-            this.orientation = orientation;
+        public void setSide(Side side) {
+            this.side = side;
         }
 
         public void setOffhandSlotBehavior(OffhandSlotBehavior offhandSlotBehavior) {
