@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
 
 public final class ArmorHudMod {
-    public static final String MOD_ID = "armor_hud";
+    public static final String MOD_ID = "slotted_armor_hud";
     public static final String MOD_NAME = "Slotted Armor HUD";
 
     public static final String FABRIC_RESOURCE_LOADER_ID = "fabric-resource-loader-v0";

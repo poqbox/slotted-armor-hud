@@ -30,6 +30,19 @@ public class ArmorHudConfig {
     protected int minDurabilityValue;
     protected double minDurabilityPercentage;
     protected float warningIconBobbingIntervalMs;
+    protected boolean individualSlotTextures;
+    protected int slotTextureForAll;
+    protected int slotTextureForHelmet;
+    protected int slotTextureForChestplate;
+    protected int slotTextureForLeggings;
+    protected int slotTextureForBoots;
+    protected int borderWidth;
+    protected int borderTextureOffset;
+    protected CornerStyle cornerStyle;
+    protected int roundedInnerRadius;
+    protected int roundedOuterRadius;
+    protected int diagonalWidth;
+    protected int diagonalOffset;
 
     public ArmorHudConfig() {
         this.enabled = true;
@@ -216,6 +229,12 @@ public class ArmorHudConfig {
         Always,
         All,
         Equipped
+    }
+
+    public enum CornerStyle {
+        Squared,
+        Rounded,
+        Slanted
     }
 
     public static class MutableConfig extends ArmorHudConfig {

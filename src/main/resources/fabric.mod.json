@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "armor_hud",
+  "id": "slotted_armor_hud",
   "name": "Slotted Armor HUD",
   "icon": "assets/armor_hud/icon.png",
   "version": "${version}",
