@@ -30,19 +30,51 @@ public class ArmorHudConfig {
     protected int minDurabilityValue;
     protected double minDurabilityPercentage;
     protected float warningIconBobbingIntervalMs;
-    protected boolean individualSlotTextures;
-    protected int slotTextureForAll;
-    protected int slotTextureForHelmet;
-    protected int slotTextureForChestplate;
-    protected int slotTextureForLeggings;
-    protected int slotTextureForBoots;
-    protected int borderWidth;
-    protected int borderTextureOffset;
+    protected int[] slotTextures;
+    protected int borderLength;
+    protected boolean matchBorderAndSlotTextures;
     protected CornerStyle cornerStyle;
-    protected int roundedInnerRadius;
-    protected int roundedOuterRadius;
-    protected int diagonalWidth;
-    protected int diagonalOffset;
+
+    public enum Orientation {
+        Horizontal,
+        Vertical
+    }
+
+    public enum Anchor {
+        Bottom,
+        Hotbar,
+        Top,
+        Top_Center
+    }
+
+    public enum Side {
+        Left,
+        Right
+    }
+
+    public enum OffhandSlotBehavior {
+        Leave_Space,
+        Adhere,
+        Ignore
+    }
+
+    public enum Style {
+        Squared_Corners,
+        Rounded_Corners,
+        Rounded_Slots
+    }
+
+    public enum SlotsShown {
+        Always,
+        All,
+        Equipped
+    }
+
+    public enum CornerStyle {
+        Squared,
+        Rounded,
+        Rounded_Slots
+    }
 
     public ArmorHudConfig() {
         this.enabled = true;
@@ -63,6 +95,10 @@ public class ArmorHudConfig {
         this.minDurabilityValue = 10;
         this.minDurabilityPercentage = 0.115D;
         this.warningIconBobbingIntervalMs = 2000.0F;
+        this.slotTextures = new int[]{1, 1, 1, 1};
+        this.borderLength = 3;
+        this.matchBorderAndSlotTextures = false;
+        this.cornerStyle = CornerStyle.Squared;
     }
 
     public ArmorHudConfig(ArmorHudConfig original) {
@@ -84,6 +120,10 @@ public class ArmorHudConfig {
         this.minDurabilityValue = original.minDurabilityValue;
         this.minDurabilityPercentage = original.minDurabilityPercentage;
         this.warningIconBobbingIntervalMs = original.warningIconBobbingIntervalMs;
+        this.slotTextures = original.slotTextures;
+        this.borderLength = original.borderLength;
+        this.matchBorderAndSlotTextures = original.matchBorderAndSlotTextures;
+        this.cornerStyle = original.cornerStyle;
     }
 
     public static ArmorHudConfig readConfigFile() {
@@ -196,45 +236,20 @@ public class ArmorHudConfig {
         return warningIconBobbingIntervalMs;
     }
 
-    public enum Orientation {
-        Horizontal,
-        Vertical
+    public int[] getSlotTextures() {
+        return slotTextures;
     }
 
-    public enum Anchor {
-        Bottom,
-        Hotbar,
-        Top,
-        Top_Center
+    public int getBorderLength() {
+        return borderLength;
     }
 
-    public enum Side {
-        Left,
-        Right
+    public boolean isMatchBorderAndSlotTextures() {
+        return matchBorderAndSlotTextures;
     }
 
-    public enum OffhandSlotBehavior {
-        Leave_Space,
-        Adhere,
-        Ignore
-    }
-
-    public enum Style {
-        Squared_Corners,
-        Rounded_Corners,
-        Rounded_Slots
-    }
-
-    public enum SlotsShown {
-        Always,
-        All,
-        Equipped
-    }
-
-    public enum CornerStyle {
-        Squared,
-        Rounded,
-        Slanted
+    public CornerStyle getCornerStyle() {
+        return cornerStyle;
     }
 
     public static class MutableConfig extends ArmorHudConfig {
@@ -317,6 +332,34 @@ public class ArmorHudConfig {
 
         public void setWarningIconBobbingIntervalMs(float warningIconBobbingIntervalMs) {
             this.warningIconBobbingIntervalMs = warningIconBobbingIntervalMs;
+        }
+
+        public void setSlotTexture1(int slot) {
+            this.slotTextures[0] = slot;
+        }
+
+        public void setSlotTexture2(int slot) {
+            this.slotTextures[1] = slot;
+        }
+
+        public void setSlotTexture3(int slot) {
+            this.slotTextures[2] = slot;
+        }
+
+        public void setSlotTexture4(int slot) {
+            this.slotTextures[3] = slot;
+        }
+
+        public void setBorderLength(int borderLength) {
+            this.borderLength = borderLength;
+        }
+
+        public void setMatchBorderAndSlotTextures(boolean matchBorderAndSlotTextures) {
+            this.matchBorderAndSlotTextures = matchBorderAndSlotTextures;
+        }
+
+        public void setCornerStyle(CornerStyle cornerStyle) {
+            this.cornerStyle = cornerStyle;
         }
     }
 }

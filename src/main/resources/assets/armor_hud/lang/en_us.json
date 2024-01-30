@@ -2,7 +2,8 @@
   "armorHud.configScreen.title": "Slotted Armor HUD mod config",
   "armorHud.configScreen.category.position": "Position",
   "armorHud.configScreen.category.appearance": "Appearance",
-  "armorHud.configScreen.category.durability": "Low-durability indicator",
+  "armorHud.configScreen.category.utility": "Extra Utility",
+  "armorHud.configScreen.category.advanced": "Advanced Options",
 
   "armorHud.configScreen.setting.enable.name": "Enabled",
   "armorHud.configScreen.setting.orientation.name": "Orientation",

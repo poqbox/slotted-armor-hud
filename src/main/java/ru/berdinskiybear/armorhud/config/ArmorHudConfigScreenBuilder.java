@@ -39,7 +39,8 @@ public class ArmorHudConfigScreenBuilder {
 
         ConfigCategory positionCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.position"));
         ConfigCategory appearanceCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.appearance"));
-        ConfigCategory durabilityCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.durability"));
+        ConfigCategory utilityCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.utility"));
+        ConfigCategory advancedCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.advanced"));
         ConfigEntryBuilder configEntryBuilder = configBuilder.entryBuilder();
 
         AbstractConfigListEntry<Boolean> enabledEntry;
@@ -60,6 +61,13 @@ public class ArmorHudConfigScreenBuilder {
         AbstractConfigListEntry<Integer> minDurabilityValueEntry;
         AbstractConfigListEntry<Double> minDurabilityPercentageEntry;
         AbstractConfigListEntry<Float> warningIconBobbingIntervalEntry;
+        AbstractConfigListEntry<Integer> slotTexture1Entry;
+        AbstractConfigListEntry<Integer> slotTexture2Entry;
+        AbstractConfigListEntry<Integer> slotTexture3Entry;
+        AbstractConfigListEntry<Integer> slotTexture4Entry;
+        AbstractConfigListEntry<Integer> borderLengthEntry;
+        AbstractConfigListEntry<Boolean> matchBorderAndSlotTexturesEntry;
+        AbstractConfigListEntry<CornerStyle> cornerStyleEntry;
 
         enabledEntry = configEntryBuilder
                 .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.enable.name"), ArmorHudMod.getCurrentConfig().isEnabled())
@@ -239,7 +247,7 @@ public class ArmorHudConfigScreenBuilder {
                     return Optional.empty();
                 })
                 .build();
-        durabilityCategory.addEntry(warningEntry);
+        utilityCategory.addEntry(warningEntry);
 
         minDurabilityValueEntry = configEntryBuilder
                 .startIntField(Text.translatable("armorHud.configScreen.setting.minDurabilityValue.name"), ArmorHudMod.getCurrentConfig().getMinDurabilityValue())
@@ -252,7 +260,7 @@ public class ArmorHudConfigScreenBuilder {
                 })
                 .setMin(0)
                 .build();
-        durabilityCategory.addEntry(minDurabilityValueEntry);
+        utilityCategory.addEntry(minDurabilityValueEntry);
 
         minDurabilityPercentageEntry = configEntryBuilder
                 .startDoubleField(Text.translatable("armorHud.configScreen.setting.minDurabilityPercentage.name"), ArmorHudMod.getCurrentConfig().getMinDurabilityPercentage() * 100.0D)
@@ -266,7 +274,7 @@ public class ArmorHudConfigScreenBuilder {
                 .setMin(0.0D)
                 .setMax(100.0D)
                 .build();
-        durabilityCategory.addEntry(minDurabilityPercentageEntry);
+        utilityCategory.addEntry(minDurabilityPercentageEntry);
 
         final float minWarningIconBobbingInterval = 0.2F;
         warningIconBobbingIntervalEntry = configEntryBuilder
@@ -283,7 +291,91 @@ public class ArmorHudConfigScreenBuilder {
                 //.setMin(minWarningIconBobbingInterval)
                 .setMax(5.0F)
                 .build();
-        durabilityCategory.addEntry(warningIconBobbingIntervalEntry);
+        utilityCategory.addEntry(warningIconBobbingIntervalEntry);
+
+        slotTexture1Entry = configEntryBuilder
+                .startIntSlider(Text.translatable("armorHud.configScreen.setting.slotTexture1.name"), ArmorHudMod.getCurrentConfig().getSlotTextures()[0], 1, 9)
+                .setDefaultValue(defaultConfig.getSlotTextures()[0])
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.slotTexture1.description"))
+                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setSlotTexture1(value))
+                .setErrorSupplier((Integer value) -> {
+                    ArmorHudMod.previewConfig.setSlotTexture1(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(slotTexture1Entry);
+
+        slotTexture2Entry = configEntryBuilder
+                .startIntSlider(Text.translatable("armorHud.configScreen.setting.slotTexture2.name"), ArmorHudMod.getCurrentConfig().getSlotTextures()[1], 1, 9)
+                .setDefaultValue(defaultConfig.getSlotTextures()[1])
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.slotTexture2.description"))
+                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setSlotTexture2(value))
+                .setErrorSupplier((Integer value) -> {
+                    ArmorHudMod.previewConfig.setSlotTexture2(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(slotTexture2Entry);
+
+        slotTexture3Entry = configEntryBuilder
+                .startIntSlider(Text.translatable("armorHud.configScreen.setting.slotTexture3.name"), ArmorHudMod.getCurrentConfig().getSlotTextures()[2], 1, 9)
+                .setDefaultValue(defaultConfig.getSlotTextures()[2])
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.slotTexture3.description"))
+                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setSlotTexture3(value))
+                .setErrorSupplier((Integer value) -> {
+                    ArmorHudMod.previewConfig.setSlotTexture3(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(slotTexture3Entry);
+
+        slotTexture4Entry = configEntryBuilder
+                .startIntSlider(Text.translatable("armorHud.configScreen.setting.slotTexture4.name"), ArmorHudMod.getCurrentConfig().getSlotTextures()[3], 1, 9)
+                .setDefaultValue(defaultConfig.getSlotTextures()[3])
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.slotTexture4.description"))
+                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setSlotTexture4(value))
+                .setErrorSupplier((Integer value) -> {
+                    ArmorHudMod.previewConfig.setSlotTexture4(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(slotTexture4Entry);
+
+        borderLengthEntry = configEntryBuilder
+                .startIntSlider(Text.translatable("armorHud.configScreen.setting.borderLength.name"), ArmorHudMod.getCurrentConfig().getBorderLength(), 0, 10)
+                .setDefaultValue(defaultConfig.getBorderLength())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.borderLength.description"))
+                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setBorderLength(value))
+                .setErrorSupplier((Integer value) -> {
+                    ArmorHudMod.previewConfig.setBorderLength(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(borderLengthEntry);
+
+        matchBorderAndSlotTexturesEntry = configEntryBuilder
+                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.matchBorderAndSlotTextures.name"), ArmorHudMod.getCurrentConfig().isMatchBorderAndSlotTextures())
+                .setDefaultValue(defaultConfig.isMatchBorderAndSlotTextures())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.matchBorderAndSlotTextures.description"))
+                .setSaveConsumer((Boolean value) -> ArmorHudMod.temporaryConfig.setMatchBorderAndSlotTextures(value))
+                .setErrorSupplier((Boolean value) -> {
+                    ArmorHudMod.previewConfig.setMatchBorderAndSlotTextures(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(matchBorderAndSlotTexturesEntry);
+
+        cornerStyleEntry = configEntryBuilder
+                .startEnumSelector(Text.translatable("armorHud.configScreen.setting.cornerStyle.name"), CornerStyle.class, ArmorHudMod.getCurrentConfig().getCornerStyle())
+                .setDefaultValue(defaultConfig.getCornerStyle())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.cornerStyle.description"))
+                .setSaveConsumer((CornerStyle value) -> ArmorHudMod.temporaryConfig.setCornerStyle(value))
+                .setErrorSupplier((CornerStyle value) -> {
+                    ArmorHudMod.previewConfig.setCornerStyle(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(cornerStyleEntry);
 
         return configBuilder.build();
     }

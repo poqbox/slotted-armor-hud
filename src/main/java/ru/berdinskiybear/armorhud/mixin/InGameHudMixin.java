@@ -22,7 +22,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.berdinskiybear.armorhud.ArmorHudMod;
 import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
@@ -48,6 +50,7 @@ public abstract class InGameHudMixin {
     private static final int armorHud_minWarningHeight = 2;
     private static final int armorHud_maxWarningHeight = 7;
     private static final int armorHud_warningHorizontalOffset = 7;
+    private static final int armorSlot_length = 20;
 
     private long armorHud_lastMeasuredTime;
     private long armorHud_measuredTime;
@@ -108,7 +111,7 @@ public abstract class InGameHudMixin {
                     final int verticalOffsetMultiplier;
                     final int widgetWidth;
                     final int widgetHeight;
-                    final int slots;
+                    final int slotNum;
 
                     //
                     context.getMatrices().push();
@@ -161,12 +164,12 @@ public abstract class InGameHudMixin {
                             default -> throw new IllegalStateException("Unexpected value: " + currentArmorHudConfig.getOffhandSlotBehavior());
                         }
 
-                        slots = currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Equipped ? amount : 4;
-                        widgetWidth = armorHud_width + ((slots - 1) * armorHud_step);
-                        widgetHeight = armorHud_height + ((slots - 1) * armorHud_step);
+                        slotNum = currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Equipped ? amount : 4;
 
                         int armorWidgetX1 = 0;
                         int armorWidgetY1 = 0;
+                        widgetWidth = armorHud_width + ((slotNum - 1) * armorHud_step);
+                        widgetHeight = armorHud_height + ((slotNum - 1) * armorHud_step);
                         switch (currentArmorHudConfig.getOrientation()) {
                             case Horizontal -> {
                                 armorWidgetX1 = switch (currentArmorHudConfig.getAnchor()) {
@@ -212,13 +215,19 @@ public abstract class InGameHudMixin {
 
                     // here I draw the slots
                     {
+                        int[] slotData = new int[slotNum];
+                        for (int i = 0; i < slotNum; i++)
+                            slotData[i] = currentArmorHudConfig.getSlotTextures()[i];
+
                         context.getMatrices().push();
                         context.getMatrices().translate(0, 0, -91);
-                        switch (currentArmorHudConfig.getStyle()) {
-                            case Squared_Corners -> this.drawSlots1(context, armorWidgetX, armorWidgetY, widgetWidth, 3, currentArmorHudConfig.getOrientation(), slots);
-                            case Rounded_Corners -> this.drawSlots2(context, armorWidgetX, armorWidgetY, widgetWidth, 3, currentArmorHudConfig.getOrientation(), slots);
-                            case Rounded_Slots -> this.drawSlots3(context, armorWidgetX, armorWidgetY, widgetWidth, 3, currentArmorHudConfig.getOrientation(), slots);
-                        }
+//                        switch (currentArmorHudConfig.getStyle()) {
+//                            case Squared_Corners -> this.drawSlots1(context, armorWidgetX, armorWidgetY, widgetWidth, 3, currentArmorHudConfig.getOrientation(), slotNum);
+//                            case Rounded_Corners -> this.drawSlots2(context, armorWidgetX, armorWidgetY, widgetWidth, 3, currentArmorHudConfig.getOrientation(), slotNum);
+//                            case Rounded_Slots -> this.drawSlots3(context, armorWidgetX, armorWidgetY, widgetWidth, 3, currentArmorHudConfig.getOrientation(), slotNum);
+//                        }
+
+                        this.drawCustomSlots(context, armorWidgetX, armorWidgetY, widgetWidth, currentArmorHudConfig.getBorderLength(), currentArmorHudConfig.getOrientation(), slotData, currentArmorHudConfig.isMatchBorderAndSlotTextures(), currentArmorHudConfig.getCornerStyle());
                         context.getMatrices().pop();
                     }
 
@@ -379,6 +388,67 @@ public abstract class InGameHudMixin {
             for (int i = 0; i < slots; i++)
                 context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + (armorHud_width - armorHud_step) / 2 + i * armorHud_step, armorWidgetY, 24 + (armorHud_width - armorHud_step) / 2, 23, armorHud_step, armorHud_height);
             context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + widgetWidth - (armorHud_width - armorHud_step) / 2, armorWidgetY, 24, 23, (armorHud_width - armorHud_step) / 2, armorHud_height);
+        }
+    }
+
+    private void drawCustomSlots(DrawContext context, int armorWidgetX, int armorWidgetY, int widgetWidth, int borderLength, ArmorHudConfig.Orientation orientation, int[] slots, boolean matchBorderAndSlotTextures, ArmorHudConfig.CornerStyle cornerStyle) {
+        Map<Integer, Integer> armorHud_slotTextureX = new HashMap<Integer, Integer>();
+        for (int i = 0; i < 9; i++)
+            armorHud_slotTextureX.put(i + 1, 1 + i * armorSlot_length);
+        // round corners texture location (uses offhand slot texture)
+        // (24, 23)
+        int offhandTextureX = 24;
+        int offhandTextureY = 23;
+        if (orientation == ArmorHudConfig.Orientation.Vertical) {
+            // calculate slot textures
+            int slotWidth = armorSlot_length;
+            int slotOffset = 0;
+            if (borderLength > 0) {
+                slotWidth -= 2 * (borderLength - 1);
+                slotOffset += borderLength - 1;
+            }
+            // draw slot texture
+            for (int i = 0; i < slots.length; i++)
+                context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + i * armorSlot_length, armorHud_slotTextureX.get(slots[i]) + slotOffset, 1, slotWidth, armorSlot_length);
+            // draw border texture
+            if (borderLength > 0) {
+                // calculate border textures
+                int endPieceOffset = slotWidth + borderLength;
+                int borderTextureX1 = armorHud_slotTextureX.get(1) + borderLength - 1;
+                int borderTextureX2 = armorHud_slotTextureX.get(9) + slotWidth + borderLength - 1;
+                int borderTextureY2 = slotWidth + borderLength;
+                int borderYPos = 2 + armorSlot_length * slots.length - borderLength;
+                if (matchBorderAndSlotTextures)
+                    borderTextureX1 = armorHud_slotTextureX.get(slots[0]) + borderLength - 1;
+                // draw border
+                for (int i = 0; i < slots.length; i++) {
+                    // sides
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + 1 + i * armorSlot_length, 0, 1, borderLength, armorSlot_length);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + 1 + i * armorSlot_length, borderTextureX2, 1, borderLength, armorSlot_length);
+                }
+                if (cornerStyle == ArmorHudConfig.CornerStyle.Rounded) {
+                    // top-bottom
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, offhandTextureX, offhandTextureY, armorHud_width, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderYPos, offhandTextureX, offhandTextureY + endPieceOffset, armorHud_width, borderLength);
+                }
+                else {
+                    // top
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, 0, 0, borderLength, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY, borderTextureX1, 0, slotWidth, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY, borderTextureX2, 0, borderLength, borderLength);
+                    // bottom
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderYPos, 0, borderTextureY2, borderLength, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY + borderYPos, borderTextureX1, borderTextureY2, slotWidth, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + borderYPos, borderTextureX2, borderTextureY2, borderLength, borderLength);
+                }
+            }
+        }
+        else {
+            int slotHeight = armorSlot_length;
+            if (borderLength > 0)
+                slotHeight -= borderLength + 1;
+            for (int i = 0; i < slots.length; i++)
+                context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + 1, armorHud_slotTextureX.get(slots[i]), 1, armorSlot_length, slotHeight);
         }
     }
 
