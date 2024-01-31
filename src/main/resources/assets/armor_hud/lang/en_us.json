@@ -41,5 +41,5 @@
   "armorHud.configScreen.setting.minDurabilityValue.description": "If an item's durability falls below this value, \na warning icon will be displayed.",
   "armorHud.configScreen.setting.minDurabilityPercentage.description": "If an item's durability falls below this percentage, \na warning icon will be displayed.",
   "armorHud.configScreen.setting.warningIconBobbingIntervalEntry.description": "Defines how quickly the warning icons \nwill move up and down.",
-  "armorHud.configScreen.setting.style.description": "Defines how the widget border is drawn.\nResource packs work best with 'Squared Corners'.\n Squared_Corners\n Rounded_Corners\n Rounded_Slots"
+  "armorHud.configScreen.setting.style.description": "Defines how the widget border is drawn.\nResource packs work best with 'Squared'.\n Squared\n Rounded"
 }

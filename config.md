@@ -52,10 +52,9 @@ inside curly brackets). If any of the configuration parameters are missing, thei
 1. ##### `"style"`
     * Defines how the widget is drawn.
     * Possible values:
-        * `"Squared_Corners"`
-        * `"Rounded_Corners"`
-        * `"Rounded_Slots"`
-    * Default value: `"Rounded_Corners"`
+        * `"Squared"`
+        * `"Rounded"`
+    * Default value: `"Squared"`
 1. ##### `"slotsShown"`
     * Defines when and which armor slots are shown.
     * Possible values:

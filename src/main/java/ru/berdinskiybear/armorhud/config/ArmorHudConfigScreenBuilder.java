@@ -67,7 +67,6 @@ public class ArmorHudConfigScreenBuilder {
         AbstractConfigListEntry<Integer> slotTexture4Entry;
         AbstractConfigListEntry<Integer> borderLengthEntry;
         AbstractConfigListEntry<Boolean> matchBorderAndSlotTexturesEntry;
-        AbstractConfigListEntry<CornerStyle> cornerStyleEntry;
 
         enabledEntry = configEntryBuilder
                 .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.enable.name"), ArmorHudMod.getCurrentConfig().isEnabled())
@@ -364,18 +363,6 @@ public class ArmorHudConfigScreenBuilder {
                 })
                 .build();
         advancedCategory.addEntry(matchBorderAndSlotTexturesEntry);
-
-        cornerStyleEntry = configEntryBuilder
-                .startEnumSelector(Text.translatable("armorHud.configScreen.setting.cornerStyle.name"), CornerStyle.class, ArmorHudMod.getCurrentConfig().getCornerStyle())
-                .setDefaultValue(defaultConfig.getCornerStyle())
-                .setTooltip(Text.translatable("armorHud.configScreen.setting.cornerStyle.description"))
-                .setSaveConsumer((CornerStyle value) -> ArmorHudMod.temporaryConfig.setCornerStyle(value))
-                .setErrorSupplier((CornerStyle value) -> {
-                    ArmorHudMod.previewConfig.setCornerStyle(value);
-                    return Optional.empty();
-                })
-                .build();
-        advancedCategory.addEntry(cornerStyleEntry);
 
         return configBuilder.build();
     }

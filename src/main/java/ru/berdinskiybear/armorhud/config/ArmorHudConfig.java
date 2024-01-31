@@ -33,7 +33,6 @@ public class ArmorHudConfig {
     protected int[] slotTextures;
     protected int borderLength;
     protected boolean matchBorderAndSlotTextures;
-    protected CornerStyle cornerStyle;
 
     public enum Orientation {
         Horizontal,
@@ -59,21 +58,14 @@ public class ArmorHudConfig {
     }
 
     public enum Style {
-        Squared_Corners,
-        Rounded_Corners,
-        Rounded_Slots
+        Squared,
+        Rounded
     }
 
     public enum SlotsShown {
         Always,
         All,
         Equipped
-    }
-
-    public enum CornerStyle {
-        Squared,
-        Rounded,
-        Rounded_Slots
     }
 
     public ArmorHudConfig() {
@@ -84,7 +76,7 @@ public class ArmorHudConfig {
         this.offhandSlotBehavior = OffhandSlotBehavior.Leave_Space;
         this.offsetX = 0;
         this.offsetY = 0;
-        this.style = Style.Squared_Corners;
+        this.style = Style.Squared;
         this.slotsShown = SlotsShown.Equipped;
         this.emptyIconsShown = true;
         this.reversed = false;
@@ -98,7 +90,6 @@ public class ArmorHudConfig {
         this.slotTextures = new int[]{1, 1, 1, 1};
         this.borderLength = 3;
         this.matchBorderAndSlotTextures = false;
-        this.cornerStyle = CornerStyle.Squared;
     }
 
     public ArmorHudConfig(ArmorHudConfig original) {
@@ -123,7 +114,6 @@ public class ArmorHudConfig {
         this.slotTextures = original.slotTextures;
         this.borderLength = original.borderLength;
         this.matchBorderAndSlotTextures = original.matchBorderAndSlotTextures;
-        this.cornerStyle = original.cornerStyle;
     }
 
     public static ArmorHudConfig readConfigFile() {
@@ -248,10 +238,6 @@ public class ArmorHudConfig {
         return matchBorderAndSlotTextures;
     }
 
-    public CornerStyle getCornerStyle() {
-        return cornerStyle;
-    }
-
     public static class MutableConfig extends ArmorHudConfig {
 
         public MutableConfig() {
@@ -356,10 +342,6 @@ public class ArmorHudConfig {
 
         public void setMatchBorderAndSlotTextures(boolean matchBorderAndSlotTextures) {
             this.matchBorderAndSlotTextures = matchBorderAndSlotTextures;
-        }
-
-        public void setCornerStyle(CornerStyle cornerStyle) {
-            this.cornerStyle = cornerStyle;
         }
     }
 }
