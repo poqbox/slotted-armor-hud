@@ -395,60 +395,130 @@ public abstract class InGameHudMixin {
         Map<Integer, Integer> armorHud_slotTextureX = new HashMap<Integer, Integer>();
         for (int i = 0; i < 9; i++)
             armorHud_slotTextureX.put(i + 1, 1 + i * armorSlot_length);
-        // round corners texture location (uses offhand slot texture)
-        // (24, 23)
         int offhandTextureX = 24;
         int offhandTextureY = 23;
-        if (orientation == ArmorHudConfig.Orientation.Vertical) {
-            // calculate slot textures
-            int slotWidth = armorSlot_length;
-            int slotOffset = 0;
-            if (borderLength > 0) {
-                slotWidth -= 2 * (borderLength - 1);
-                slotOffset += borderLength - 1;
+        int slotAmount = slots.length;
+
+        // calculate slot textures
+        int slotLength = armorSlot_length;
+        int edgeSlotLength = armorSlot_length;
+        int slotOffset = 0;
+        if (borderLength > 0) {
+            slotLength -= 2 * (borderLength - 1);
+            edgeSlotLength -= borderLength - 1;
+            slotOffset += borderLength - 1;
+        }
+        // calculate border textures
+        int endPieceOffset = slotLength + borderLength;
+        int edgePieceLength = 1 + armorSlot_length - borderLength;
+        int borderTextureX1 = armorHud_slotTextureX.get(1) + borderLength - 1;
+        int borderTextureX2 = armorHud_slotTextureX.get(9) + slotLength + borderLength - 1;
+        int borderTextureY1 = borderLength;
+        int borderTextureY2 = slotLength + borderLength;
+        int endBorderOffset = 2 + armorSlot_length * slotAmount - borderLength;
+
+        // draw slot texture
+        if (slotAmount == 1)
+            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, slotLength, slotLength);
+        else {
+            if (orientation == ArmorHudConfig.Orientation.Vertical) {
+                for (int i = 0; i < slotAmount; i++)
+                    if (i == 0)
+                        context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, slotLength, edgeSlotLength);
+                    else if (i == slotAmount - 1)
+                        context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + i * armorSlot_length, armorHud_slotTextureX.get(slots[i]) + slotOffset, 1, slotLength, edgeSlotLength);
+                    else
+                        context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + i * armorSlot_length, armorHud_slotTextureX.get(slots[i]) + slotOffset, 1, slotLength, armorSlot_length);
+            } else {
+                for (int i = 0; i < slotAmount; i++)
+                    if (i == 0)
+                        context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, edgeSlotLength, slotLength);
+                    else if (i == slotAmount - 1)
+                        context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[i]), 1 + slotOffset, edgeSlotLength, slotLength);
+                    else
+                        context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[i]), 1 + slotOffset, armorSlot_length, slotLength);
             }
-            // draw slot texture
-            for (int i = 0; i < slots.length; i++)
-                context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + i * armorSlot_length, armorHud_slotTextureX.get(slots[i]) + slotOffset, 1, slotWidth, armorSlot_length);
-            // draw border texture
-            if (borderLength > 0) {
-                // calculate border textures
-                int endPieceOffset = slotWidth + borderLength;
-                int borderTextureX1 = armorHud_slotTextureX.get(1) + borderLength - 1;
-                int borderTextureX2 = armorHud_slotTextureX.get(9) + slotWidth + borderLength - 1;
-                int borderTextureY2 = slotWidth + borderLength;
-                int borderYPos = 2 + armorSlot_length * slots.length - borderLength;
+        }
+        // draw border texture
+        if (borderLength > 0) {
+            if (orientation == ArmorHudConfig.Orientation.Vertical) {
                 if (matchBorderAndSlotTextures)
                     borderTextureX1 = armorHud_slotTextureX.get(slots[0]) + borderLength - 1;
                 // draw border
-                for (int i = 0; i < slots.length; i++) {
-                    // sides
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + 1 + i * armorSlot_length, 0, 1, borderLength, armorSlot_length);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + 1 + i * armorSlot_length, borderTextureX2, 1, borderLength, armorSlot_length);
+                if (slotAmount == 1) {
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderLength, 0, borderLength, borderLength, slotLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + borderLength, borderTextureX2, borderLength, borderLength, slotLength);
+                } else {
+                    for (int i = 0; i < slotAmount; i++) {
+                        // sides
+                        if (i == 0) {
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderLength, 0, borderLength, borderLength, edgePieceLength);
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + borderLength, borderTextureX2, borderLength, borderLength, edgePieceLength);
+                        }
+                        else if (i == slotAmount - 1) {
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + 1 + i * armorSlot_length, 0, 1, borderLength, edgePieceLength);
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + 1 + i * armorSlot_length, borderTextureX2, 1, borderLength, edgePieceLength);
+                        }
+                        else {
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + 1 + i * armorSlot_length, 0, 1, borderLength, armorSlot_length);
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + 1 + i * armorSlot_length, borderTextureX2, 1, borderLength, armorSlot_length);
+                        }
+                    }
                 }
                 if (cornerStyle == ArmorHudConfig.CornerStyle.Rounded) {
                     // top-bottom
                     context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, offhandTextureX, offhandTextureY, armorHud_width, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderYPos, offhandTextureX, offhandTextureY + endPieceOffset, armorHud_width, borderLength);
-                }
-                else {
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + endBorderOffset, offhandTextureX, offhandTextureY + endPieceOffset, armorHud_width, borderLength);
+                } else {
                     // top
                     context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, 0, 0, borderLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY, borderTextureX1, 0, slotWidth, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY, borderTextureX1, 0, slotLength, borderLength);
                     context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY, borderTextureX2, 0, borderLength, borderLength);
                     // bottom
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderYPos, 0, borderTextureY2, borderLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY + borderYPos, borderTextureX1, borderTextureY2, slotWidth, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + borderYPos, borderTextureX2, borderTextureY2, borderLength, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + endBorderOffset, 0, borderTextureY2, borderLength, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY + endBorderOffset, borderTextureX1, borderTextureY2, slotLength, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + endBorderOffset, borderTextureX2, borderTextureY2, borderLength, borderLength);
                 }
             }
-        }
-        else {
-            int slotHeight = armorSlot_length;
-            if (borderLength > 0)
-                slotHeight -= borderLength + 1;
-            for (int i = 0; i < slots.length; i++)
-                context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + 1, armorHud_slotTextureX.get(slots[i]), 1, armorSlot_length, slotHeight);
+            else {
+                if (slotAmount == 1) {
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY, borderTextureX1, 0, slotLength, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY + endPieceOffset, borderTextureX1, borderTextureY2, slotLength, borderLength);
+                } else {
+                    int borderTextureXvar = armorHud_slotTextureX.get(1);
+                    for (int i = 0; i < slotAmount; i++) {
+                        // top-bottom
+                        if (i > 0 && matchBorderAndSlotTextures)
+                            borderTextureXvar = armorHud_slotTextureX.get(slots[i]);
+                        if (i == 0) {
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY, borderTextureX1, 0, edgePieceLength, borderLength);
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY + endPieceOffset, borderTextureX1, borderTextureY2, edgePieceLength, borderLength);
+                        }
+                        else if (i == slotAmount - 1) {
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY, borderTextureXvar, 0, edgePieceLength, borderLength);
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + endPieceOffset, borderTextureXvar, borderTextureY2, edgePieceLength, borderLength);
+                        }
+                        else {
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY, borderTextureXvar, 0, armorSlot_length, borderLength);
+                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + endPieceOffset, borderTextureXvar, borderTextureY2, armorSlot_length, borderLength);
+                        }
+                    }
+                }
+                if (cornerStyle == ArmorHudConfig.CornerStyle.Rounded) {
+                    // left-right
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, offhandTextureX, offhandTextureY, borderLength, armorHud_height);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endBorderOffset, armorWidgetY, offhandTextureX + endPieceOffset, offhandTextureY, borderLength, armorHud_height);
+                } else {
+                    // left
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, 0, 0, borderLength, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderLength, 0, borderTextureY1, borderLength, slotLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + endPieceOffset, 0, borderTextureY2, borderLength, borderLength);
+                    // right
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endBorderOffset, armorWidgetY, borderTextureX2, 0, borderLength, borderLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endBorderOffset, armorWidgetY + borderLength, borderTextureX2, borderTextureY1, borderLength, slotLength);
+                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endBorderOffset, armorWidgetY + endPieceOffset, borderTextureX2, borderTextureY2, borderLength, borderLength);
+                }
+            }
         }
     }
 
