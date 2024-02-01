@@ -28,7 +28,7 @@ public class StatusEffectHudMixin {
     @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;", shift = At.Shift.BY, by = 2))
     public void calculateOffset(DrawContext context, CallbackInfo ci) {
         ArmorHudConfig currentConfig = this.armorHud_getCurrentArmorHudConfig();
-        if (currentConfig.isEnabled() && currentConfig.getPushStatusEffectIcons()) {
+        if (currentConfig.isEnabled() && currentConfig.isPushStatusEffectIcons()) {
             int add = 0;
             if (currentConfig.getAnchor() == ArmorHudConfig.Anchor.Top && currentConfig.getSide() == ArmorHudConfig.Side.Right) {
                 int amount = 0;

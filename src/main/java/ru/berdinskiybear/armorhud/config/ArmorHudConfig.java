@@ -190,7 +190,7 @@ public class ArmorHudConfig {
         return slotsShown;
     }
 
-    public boolean getEmptyIconsShown() {
+    public boolean isEmptyIconsShown() {
         return emptyIconsShown;
     }
 
@@ -198,15 +198,15 @@ public class ArmorHudConfig {
         return reversed;
     }
 
-    public boolean getPushBossbars() {
+    public boolean isPushBossbars() {
         return this.pushBossbars;
     }
 
-    public boolean getPushStatusEffectIcons() {
+    public boolean isPushStatusEffectIcons() {
         return this.pushStatusEffectIcons;
     }
 
-    public boolean getPushSubtitles() {
+    public boolean isPushSubtitles() {
         return this.pushSubtitles;
     }
 

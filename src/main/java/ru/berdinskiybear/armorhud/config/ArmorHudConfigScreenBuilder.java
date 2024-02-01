@@ -4,12 +4,11 @@ import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import ru.berdinskiybear.armorhud.ArmorHudMod;
 import ru.berdinskiybear.armorhud.config.ArmorHudConfig.*;
-import java.util.Arrays;
+
 import java.util.Optional;
 
 public class ArmorHudConfigScreenBuilder {
@@ -177,8 +176,8 @@ public class ArmorHudConfigScreenBuilder {
         appearanceCategory.addEntry(slotsShownEntry);
 
         emptyIconsEntry = configEntryBuilder
-                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.emptyIconsShown.name"), ArmorHudMod.getCurrentConfig().getEmptyIconsShown())
-                .setDefaultValue(defaultConfig.getEmptyIconsShown())
+                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.emptyIconsShown.name"), ArmorHudMod.getCurrentConfig().isEmptyIconsShown())
+                .setDefaultValue(defaultConfig.isEmptyIconsShown())
                 .setTooltip(Text.translatable("armorHud.configScreen.setting.emptyIconsShown.description"))
                 .setSaveConsumer((Boolean value) -> ArmorHudMod.temporaryConfig.setEmptyIconsShown(value))
                 .setErrorSupplier((Boolean value) -> {
@@ -201,8 +200,8 @@ public class ArmorHudConfigScreenBuilder {
         appearanceCategory.addEntry(reversedEntry);
 
         pushBossbarsEntry = configEntryBuilder
-                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.pushBossbars.name"), ArmorHudMod.getCurrentConfig().getPushBossbars())
-                .setDefaultValue(defaultConfig.getPushBossbars())
+                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.pushBossbars.name"), ArmorHudMod.getCurrentConfig().isPushBossbars())
+                .setDefaultValue(defaultConfig.isPushBossbars())
                 .setTooltip(Text.translatable("armorHud.configScreen.setting.pushBossbars.description"))
                 .setSaveConsumer((Boolean value) -> ArmorHudMod.temporaryConfig.setPushBossbars(value))
                 .setErrorSupplier((Boolean value) -> {
@@ -213,8 +212,8 @@ public class ArmorHudConfigScreenBuilder {
         appearanceCategory.addEntry(pushBossbarsEntry);
 
         pushStatusEffectIconsEntry = configEntryBuilder
-                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.pushStatusEffectIcons.name"), ArmorHudMod.getCurrentConfig().getPushStatusEffectIcons())
-                .setDefaultValue(defaultConfig.getPushStatusEffectIcons())
+                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.pushStatusEffectIcons.name"), ArmorHudMod.getCurrentConfig().isPushStatusEffectIcons())
+                .setDefaultValue(defaultConfig.isPushStatusEffectIcons())
                 .setTooltip(Text.translatable("armorHud.configScreen.setting.pushStatusEffectIcons.description"))
                 .setSaveConsumer((Boolean value) -> ArmorHudMod.temporaryConfig.setPushStatusEffectIcons(value))
                 .setErrorSupplier((Boolean value) -> {
@@ -225,8 +224,8 @@ public class ArmorHudConfigScreenBuilder {
         appearanceCategory.addEntry(pushStatusEffectIconsEntry);
 
         pushSubtitlesEntry = configEntryBuilder
-                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.pushSubtitles.name"), ArmorHudMod.getCurrentConfig().getPushSubtitles())
-                .setDefaultValue(defaultConfig.getPushSubtitles())
+                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.pushSubtitles.name"), ArmorHudMod.getCurrentConfig().isPushSubtitles())
+                .setDefaultValue(defaultConfig.isPushSubtitles())
                 .setTooltip(Text.translatable("armorHud.configScreen.setting.pushSubtitles.description"))
                 .setSaveConsumer((Boolean value) -> ArmorHudMod.temporaryConfig.setPushSubtitles(value))
                 .setErrorSupplier((Boolean value) -> {

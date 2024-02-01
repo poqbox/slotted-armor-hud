@@ -27,7 +27,7 @@ public class SubtitlesHudMixin {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Ljava/lang/String;)I", ordinal = 3, shift = At.Shift.BY, by = 4))
     public void calculateOffset(DrawContext context, CallbackInfo ci) {
         ArmorHudConfig currentConfig = this.armorHud_getCurrentArmorHudConfig();
-        if (currentConfig.isEnabled() && currentConfig.getPushSubtitles()) {
+        if (currentConfig.isEnabled() && currentConfig.isPushSubtitles()) {
             int add = 0;
             if (currentConfig.getAnchor() == ArmorHudConfig.Anchor.Bottom && currentConfig.getSide() == ArmorHudConfig.Side.Right) {
                 int amount = 0;
