@@ -5,8 +5,14 @@ inside curly brackets). If any of the configuration parameters are missing, thei
 
 ### Position
 1. ##### `"enabled"`
-    * Toggles the armor HUD.
+    * Toggles the armor HUD on and off.
     * Default value: `true`
+1. ##### `"orientation"`
+   * Orientation of the widget.
+   * Possible values:
+      * `"Horizontal"`
+      * `"Vertical"`
+   * Default value: `"Horizontal"`
 1. ##### `"side"`
     * Side that the widget is displayed on.
     * Works in conjunction with 'Anchor'.
@@ -23,12 +29,6 @@ inside curly brackets). If any of the configuration parameters are missing, thei
         * `"Top_Center"`: widget is placed at the top center.
         * `"Top"`: widget is placed at the top corner of the preferred side.
     * Default value: `Hotbar`
-1. ##### `"orientation"`
-    * Orientation of the widget.
-    * Possible values:
-        * `"Horizontal"`
-        * `"Vertical"`
-    * Default value: `"Horizontal"`
 1. ##### `"offhandSlotBehavior"`
     * Defines how the widget reacts to the offhand slot and the attack indicator.
     * Effects the widget when anchored to the hotbar.
@@ -82,7 +82,7 @@ inside curly brackets). If any of the configuration parameters are missing, thei
     * Effects the widget when anchored to the bottom and to the right,
     * Default value: `true`
 1. ##### `"warningShown"`
-    * Displays a warning icon beside the low-durability item.
+    * Displays a warning icon beside low-durability items.
     * Default value: `false`
 ### Low-durability indicator
 1. ##### `"minDurabilityValue"`

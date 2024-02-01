@@ -16,6 +16,14 @@
     "sources": "https://github.com/poqli/armor-hud",
     "issues": "https://github.com/poqli/armor-hud/issues"
   },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.github_releases": "https://github.com/poqli/slotted-armor-hud/releases,",
+        "modmenu.donate": "https://www.buymeacoffee.com/piqpoq"
+      }
+    }
+  },
   "environment": "client",
   "entrypoints": {
     "main": [],
