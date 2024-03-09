@@ -1,8 +1,9 @@
 package ru.berdinskiybear.armorhud.mixin;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.SubtitlesHud;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -25,7 +26,7 @@ public class SubtitlesHudMixin {
     private final List<ItemStack> armorHud_armorItems = new ArrayList<>(4);
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Ljava/lang/String;)I", ordinal = 3, shift = At.Shift.BY, by = 4))
-    public void calculateOffset(DrawContext context, CallbackInfo ci) {
+    public void calculateOffset(MatrixStack matrixStack, CallbackInfo ci) {
         ArmorHudConfig currentConfig = this.armorHud_getCurrentArmorHudConfig();
         if (currentConfig.isEnabled() && currentConfig.isPushSubtitles()) {
             int add = 0;
@@ -74,8 +75,8 @@ public class SubtitlesHudMixin {
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", shift = At.Shift.AFTER))
-    public void offset(DrawContext context, CallbackInfo ci) {
-        context.getMatrices().translate(0.0F, -((float) this.offset), 0.0F);
+    public void offset(MatrixStack matrixStack, CallbackInfo ci) {
+        matrixStack.translate(0.0F, -((float) this.offset), 0.0F);
     }
 
     /**
