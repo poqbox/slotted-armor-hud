@@ -86,18 +86,6 @@ public class ArmorHudConfigScreenBuilder {
                 .build();
         positionCategory.addEntry(orientationEntry);
 
-        anchorEntry = configEntryBuilder
-                .startEnumSelector(Text.translatable("armorHud.configScreen.setting.anchor.name"), Anchor.class, ArmorHudMod.getCurrentConfig().getAnchor())
-                .setDefaultValue(defaultConfig.getAnchor())
-                .setTooltip(Text.translatable("armorHud.configScreen.setting.anchor.description"))
-                .setSaveConsumer((Anchor value) -> ArmorHudMod.temporaryConfig.setAnchor(value))
-                .setErrorSupplier((Anchor value) -> {
-                    ArmorHudMod.previewConfig.setAnchor(value);
-                    return Optional.empty();
-                })
-                .build();
-        positionCategory.addEntry(anchorEntry);
-
         sideEntry = configEntryBuilder
                 .startEnumSelector(Text.translatable("armorHud.configScreen.setting.side.name"), Side.class, ArmorHudMod.getCurrentConfig().getSide())
                 .setDefaultValue(defaultConfig.getSide())
@@ -109,6 +97,18 @@ public class ArmorHudConfigScreenBuilder {
                 })
                 .build();
         positionCategory.addEntry(sideEntry);
+
+        anchorEntry = configEntryBuilder
+                .startEnumSelector(Text.translatable("armorHud.configScreen.setting.anchor.name"), Anchor.class, ArmorHudMod.getCurrentConfig().getAnchor())
+                .setDefaultValue(defaultConfig.getAnchor())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.anchor.description"))
+                .setSaveConsumer((Anchor value) -> ArmorHudMod.temporaryConfig.setAnchor(value))
+                .setErrorSupplier((Anchor value) -> {
+                    ArmorHudMod.previewConfig.setAnchor(value);
+                    return Optional.empty();
+                })
+                .build();
+        positionCategory.addEntry(anchorEntry);
 
         offhandSlotBehaviorEntry = configEntryBuilder
                 .startEnumSelector(Text.translatable("armorHud.configScreen.setting.offhandSlot.name"), OffhandSlotBehavior.class, ArmorHudMod.getCurrentConfig().getOffhandSlotBehavior())

@@ -24,10 +24,10 @@ inside curly brackets). If any of the configuration parameters are missing, thei
     * Place that the widget is attached to.
     * Works in conjunction with 'Side'.
     * Possible values:
-        * `"Bottom"`: widget is placed at the bottom corner of the preferred side.
         * `"Hotbar"`: widget is placed beside the hotbar.
-        * `"Top_Center"`: widget is placed at the top center.
+        * `"Bottom"`: widget is placed at the bottom corner of the preferred side.
         * `"Top"`: widget is placed at the top corner of the preferred side.
+        * `"Top_Center"`: widget is placed at the top center.
     * Default value: `Hotbar`
 1. ##### `"offhandSlotBehavior"`
     * Defines how the widget reacts to the offhand slot and the attack indicator.
@@ -58,10 +58,10 @@ inside curly brackets). If any of the configuration parameters are missing, thei
 1. ##### `"slotsShown"`
     * Defines when and which armor slots are shown.
     * Possible values:
-        * `"Always"`: slots are always shown.
-        * `"All"`: all slots are shown if at least one of the armor slots is not empty.
-        * `"Equipped"`: only not empty slots are shown.
-    * Default value: `"Equipped"`
+        * `"Show_Equipped"`: only filled slots are shown.
+        * `"Show_All"`: all slots are shown if at least one of the armor slots is filled.
+        * `"Always_Show"`: slots are always shown.
+    * Default value: `"Show_Equipped"`
 1. ##### `"emptyIconsShown"`
     * Displays an armor outline in empty slots.
     * Effects the widget when armor slots are always shown.

@@ -37,13 +37,13 @@ public class SubtitlesHudMixin {
                     for (ItemStack itemStack : playerEntity.getInventory().armor) {
                         if (!itemStack.isEmpty())
                             amount++;
-                        if (!itemStack.isEmpty() || currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Equipped)
+                        if (!itemStack.isEmpty() || currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped)
                             this.armorHud_armorItems.add(itemStack);
                     }
 
-                    if (!(amount == 0 && currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Always)) {
+                    if (!(amount == 0 && currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Always_Show)) {
                         if (currentConfig.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
-                            if (currentConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Equipped)
+                            if (currentConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
                                 add += 20 * (amount - 1) + currentConfig.getOffsetY();
                             else
                                 add += 60 + currentConfig.getOffsetY();

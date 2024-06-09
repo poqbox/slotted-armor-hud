@@ -77,12 +77,12 @@ public abstract class InGameHudMixin {
                     ItemStack itemStack = armor.get(i);
                     if (!itemStack.isEmpty())
                         amount++;
-                    if (!itemStack.isEmpty() || currentArmorHudConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Equipped)
+                    if (!itemStack.isEmpty() || currentArmorHudConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped)
                         armorItems.add(itemStack);
                 }
 
                 // if true, then prepare and draw
-                if (amount > 0 || currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Always) {
+                if (amount > 0 || currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show) {
                     final int armorWidgetY;
                     final int armorWidgetX;
                     final int sideMultiplier;
@@ -90,7 +90,7 @@ public abstract class InGameHudMixin {
                     final int verticalMultiplier;
                     final int verticalOffsetMultiplier;
                     final int addedHotbarOffset;
-                    final int slotNum = currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Equipped ? amount : 4;
+                    final int slotNum = currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped ? amount : 4;
                     final int armorHud_longestLength = armorSlot_borderedLength + ((slotNum - 1) * armorSlot_length);
 
                     context.getMatrices().push();
@@ -187,7 +187,7 @@ public abstract class InGameHudMixin {
 
                     // here I blend in slot icons
                     if (currentArmorHudConfig.isEmptyIconsShown()) {
-                        if (currentArmorHudConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Equipped && (amount > 0 || currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Always)) {
+                        if (currentArmorHudConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped && (amount > 0 || currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)) {
                             context.getMatrices().push();
                             context.getMatrices().translate(0, 0, -90);
                             RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_COLOR, GlStateManager.DstFactor.ONE, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);

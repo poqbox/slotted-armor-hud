@@ -35,16 +35,16 @@ public class ArmorHudConfig {
         Vertical
     }
 
-    public enum Anchor {
-        Bottom,
-        Hotbar,
-        Top,
-        Top_Center
-    }
-
     public enum Side {
         Left,
         Right
+    }
+
+    public enum Anchor {
+        Hotbar,
+        Bottom,
+        Top,
+        Top_Center
     }
 
     public enum OffhandSlotBehavior {
@@ -59,21 +59,21 @@ public class ArmorHudConfig {
     }
 
     public enum SlotsShown {
-        Always,
-        All,
-        Equipped
+        Show_Equipped,
+        Show_All,
+        Always_Show
     }
 
     public ArmorHudConfig() {
         this.enabled = true;
         this.orientation = Orientation.Horizontal;
-        this.anchor = Anchor.Hotbar;
         this.side = Side.Left;
+        this.anchor = Anchor.Hotbar;
         this.offhandSlotBehavior = OffhandSlotBehavior.Leave_Space;
-        this.offsetX = 0;
-        this.offsetY = 0;
+        this.offsetX = 1;
+        this.offsetY = 1;
         this.style = Style.Squared;
-        this.slotsShown = SlotsShown.Equipped;
+        this.slotsShown = SlotsShown.Show_Equipped;
         this.emptyIconsShown = true;
         this.reversed = false;
         this.pushBossbars = true;
@@ -87,8 +87,8 @@ public class ArmorHudConfig {
     public ArmorHudConfig(ArmorHudConfig original) {
         this.enabled = original.enabled;
         this.orientation = original.orientation;
-        this.anchor = original.anchor;
         this.side = original.side;
+        this.anchor = original.anchor;
         this.offhandSlotBehavior = original.offhandSlotBehavior;
         this.offsetX = original.offsetX;
         this.offsetY = original.offsetY;
@@ -150,12 +150,12 @@ public class ArmorHudConfig {
         return orientation;
     }
 
-    public Anchor getAnchor() {
-        return anchor;
-    }
-
     public Side getSide() {
         return side;
+    }
+
+    public Anchor getAnchor() {
+        return anchor;
     }
 
     public OffhandSlotBehavior getOffhandSlotBehavior() {
@@ -228,12 +228,12 @@ public class ArmorHudConfig {
             this.orientation = orientation;
         }
 
-        public void setAnchor(Anchor anchor) {
-            this.anchor = anchor;
-        }
-
         public void setSide(Side side) {
             this.side = side;
+        }
+
+        public void setAnchor(Anchor anchor) {
+            this.anchor = anchor;
         }
 
         public void setOffhandSlotBehavior(OffhandSlotBehavior offhandSlotBehavior) {
