@@ -34,7 +34,8 @@ public abstract class InGameHudMixin {
     @Shadow private int scaledWidth;
     @Shadow private int scaledHeight;
 
-    private static final Identifier armorHud_WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
+    private static final Identifier armorHud_HOTBAR_TEXTURE = new Identifier("hud/hotbar");
+    private static final Identifier armorHud_OFFHAND_TEXTURE = new Identifier("hud/hotbar_offhand_left");
     private static final Identifier armorHud_EMPTY_HELMET_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_helmet");
     private static final Identifier armorHud_EMPTY_CHESTPLATE_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_chestplate");
     private static final Identifier armorHud_EMPTY_LEGGINGS_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_leggings");
@@ -186,7 +187,7 @@ public abstract class InGameHudMixin {
 
                     // here I prepare the widget texture
                     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                    RenderSystem.setShaderTexture(0, armorHud_WIDGETS_TEXTURE);
+                    RenderSystem.setShaderTexture(0, armorHud_HOTBAR_TEXTURE);
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
 
@@ -210,7 +211,7 @@ public abstract class InGameHudMixin {
                                 int maxDamage = armorItems.get(i).getMaxDamage();
                                 if ((1.0F - ((float) damage) / ((float) maxDamage) <= currentArmorHudConfig.getMinDurabilityPercentage()) || (maxDamage - damage <= currentArmorHudConfig.getMinDurabilityValue())) {
                                     switch (currentArmorHudConfig.getOrientation()) {
-                                        case Horizontal -> context.drawTexture(armorHud_WIDGETS_TEXTURE,
+                                        case Horizontal -> context.drawTexture(armorHud_HOTBAR_TEXTURE,
                                                     armorWidgetX
                                                             + (armorSlot_length * iReversed)
                                                             + warningIcon_offset,
@@ -219,7 +220,7 @@ public abstract class InGameHudMixin {
                                                             + (8 * verticalOffsetMultiplier)
                                                             + ((warningIcon_minHeight + Math.round(Math.abs(this.armorHud_getCycleProgress(armorItemIndexes.get(i), currentArmorHudConfig) * 2.0F - 1.0F) * warningIcon_maxHeight)) * verticalMultiplier),
                                                     238, 22, 8, 8);
-                                        case Vertical -> context.drawTexture(armorHud_WIDGETS_TEXTURE,
+                                        case Vertical -> context.drawTexture(armorHud_HOTBAR_TEXTURE,
                                                     armorWidgetX
                                                             + (armorSlot_borderedLength * (sideOffsetMultiplier + 1))
                                                             + (8 * sideOffsetMultiplier)
@@ -284,8 +285,6 @@ public abstract class InGameHudMixin {
         final Map<Integer, Integer> armorHud_slotTextureX = new HashMap<Integer, Integer>();
         for (int i = 0; i < 9; i++)
             armorHud_slotTextureX.put(i + 1, 1 + i * armorSlot_length);
-        final int offhandTextureX = 24;
-        final int offhandTextureY = 23;
         final int slotAmount = slots.length;
 
         // calculate slot textures
@@ -300,24 +299,28 @@ public abstract class InGameHudMixin {
         // draw slot texture
         {
             if (slotAmount == 1)
-                context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, slotLength, slotLength);
+//                context.drawGuiTexture(armorHud_WIDGETS_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[0]), 1, 0, 0, 182, 22);
+//                context.drawGuiTexture(armorHud_WIDGETS_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[0]), 1, 0, 22, 20, 22);
+//                context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, slotLength, slotLength);
+                context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, slotLength, slotLength);
             else {
                 if (orientation == ArmorHudConfig.Orientation.Vertical) {
                     for (int i = 0; i < slotAmount; i++)
                         if (i == 0)
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, slotLength, edgeSlotLength);
+                            //context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, slotLength, edgeSlotLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, slotLength, edgeSlotLength);
                         else if (i == slotAmount - 1)
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + i * armorSlot_length, armorHud_slotTextureX.get(slots[i]) + slotOffset, 1, slotLength, edgeSlotLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[i]) + slotOffset, 1, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + i * armorSlot_length, slotLength, edgeSlotLength);
                         else
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + i * armorSlot_length, armorHud_slotTextureX.get(slots[i]) + slotOffset, 1, slotLength, armorSlot_length);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[i]) + slotOffset, 1, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + i * armorSlot_length, slotLength, armorSlot_length);
                 } else {
                     for (int i = 0; i < slotAmount; i++)
                         if (i == 0)
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, edgeSlotLength, slotLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, armorWidgetX + 1 + slotOffset, armorWidgetY + 1 + slotOffset, edgeSlotLength, slotLength);
                         else if (i == slotAmount - 1)
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[i]), 1 + slotOffset, edgeSlotLength, slotLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[i]), 1 + slotOffset, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + 1 + slotOffset, edgeSlotLength, slotLength);
                         else
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + 1 + slotOffset, armorHud_slotTextureX.get(slots[i]), 1 + slotOffset, armorSlot_length, slotLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, armorHud_slotTextureX.get(slots[i]), 1 + slotOffset, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + 1 + slotOffset, armorSlot_length, slotLength);
                 }
             }
         }
@@ -337,42 +340,42 @@ public abstract class InGameHudMixin {
                     borderTextureX1 = armorHud_slotTextureX.get(slots[0]) + borderLength - 1;
                 if (slotAmount == 1) {
                     // side borders
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderLength, 0, borderLength, borderLength, slotLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + borderLength, borderTextureX2, borderLength, borderLength, slotLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, borderLength, armorWidgetX, armorWidgetY + borderLength, borderLength, slotLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, borderLength, armorWidgetX + endPieceOffset, armorWidgetY + borderLength, borderLength, slotLength);
                 } else {
                     for (int i = 0; i < slotAmount; i++) {
                         // side borders
                         if (i == 0) {
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderLength, 0, borderLength, borderLength, edgePieceLength);
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + borderLength, borderTextureX2, borderLength, borderLength, edgePieceLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, borderLength, armorWidgetX, armorWidgetY + borderLength, borderLength, edgePieceLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, borderLength, armorWidgetX + endPieceOffset, armorWidgetY + borderLength, borderLength, edgePieceLength);
                         } else if (i == slotAmount - 1) {
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + 1 + i * armorSlot_length, 0, 1, borderLength, edgePieceLength);
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + 1 + i * armorSlot_length, borderTextureX2, 1, borderLength, edgePieceLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, 1, armorWidgetX, armorWidgetY + 1 + i * armorSlot_length, borderLength, edgePieceLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, 1, armorWidgetX + endPieceOffset, armorWidgetY + 1 + i * armorSlot_length, borderLength, edgePieceLength);
                         } else {
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + 1 + i * armorSlot_length, 0, 1, borderLength, armorSlot_length);
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + 1 + i * armorSlot_length, borderTextureX2, 1, borderLength, armorSlot_length);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, 1, armorWidgetX, armorWidgetY + 1 + i * armorSlot_length, borderLength, armorSlot_length);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, 1, armorWidgetX + endPieceOffset, armorWidgetY + 1 + i * armorSlot_length, borderLength, armorSlot_length);
                         }
                     }
                 }
                 if (style == ArmorHudConfig.Style.Rounded) {
                     // top-bottom borders
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, offhandTextureX, offhandTextureY, armorSlot_borderedLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + endBorderOffset, offhandTextureX, offhandTextureY + endPieceOffset, armorSlot_borderedLength, borderLength);
+                    context.drawGuiTexture(armorHud_OFFHAND_TEXTURE, 29, 24, 0, 1, armorWidgetX, armorWidgetY, armorSlot_borderedLength, borderLength);
+                    context.drawGuiTexture(armorHud_OFFHAND_TEXTURE, 29, 24, 0, 1 + endPieceOffset, armorWidgetX, armorWidgetY + endBorderOffset, armorSlot_borderedLength, borderLength);
                 } else {
                     // top border
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, 0, 0, borderLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY, borderTextureX1, 0, slotLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY, borderTextureX2, 0, borderLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, 0, armorWidgetX, armorWidgetY, borderLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX1, 0, armorWidgetX + borderLength, armorWidgetY, slotLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, 0, armorWidgetX + endPieceOffset, armorWidgetY, borderLength, borderLength);
                     // bottom border
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + endBorderOffset, 0, borderTextureY2, borderLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY + endBorderOffset, borderTextureX1, borderTextureY2, slotLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endPieceOffset, armorWidgetY + endBorderOffset, borderTextureX2, borderTextureY2, borderLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, borderTextureY2, armorWidgetX, armorWidgetY + endBorderOffset, borderLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX1, borderTextureY2, armorWidgetX + borderLength, armorWidgetY + endBorderOffset, slotLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, borderTextureY2, armorWidgetX + endPieceOffset, armorWidgetY + endBorderOffset, borderLength, borderLength);
                 }
             } else {
                 if (slotAmount == 1) {
                     // top-bottom borders
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY, borderTextureX1, 0, slotLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY + endPieceOffset, borderTextureX1, borderTextureY2, slotLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX1, 0, armorWidgetX + borderLength, armorWidgetY, slotLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX1, borderTextureY2, armorWidgetX + borderLength, armorWidgetY + endPieceOffset, slotLength, borderLength);
                 } else {
                     int borderTextureXvar = armorHud_slotTextureX.get(1);
                     for (int i = 0; i < slotAmount; i++) {
@@ -380,30 +383,30 @@ public abstract class InGameHudMixin {
                         if (i > 0 && matchBorderAndSlotTextures)
                             borderTextureXvar = armorHud_slotTextureX.get(slots[i]);
                         if (i == 0) {
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY, borderTextureX1, 0, edgePieceLength, borderLength);
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + borderLength, armorWidgetY + endPieceOffset, borderTextureX1, borderTextureY2, edgePieceLength, borderLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX1, 0, armorWidgetX + borderLength, armorWidgetY, edgePieceLength, borderLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX1, borderTextureY2, armorWidgetX + borderLength, armorWidgetY + endPieceOffset, edgePieceLength, borderLength);
                         } else if (i == slotAmount - 1) {
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY, borderTextureXvar, 0, edgePieceLength, borderLength);
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + endPieceOffset, borderTextureXvar, borderTextureY2, edgePieceLength, borderLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureXvar, 0, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY, edgePieceLength, borderLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureXvar, borderTextureY2, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + endPieceOffset, edgePieceLength, borderLength);
                         } else {
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY, borderTextureXvar, 0, armorSlot_length, borderLength);
-                            context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + endPieceOffset, borderTextureXvar, borderTextureY2, armorSlot_length, borderLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureXvar, 0, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY, armorSlot_length, borderLength);
+                            context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureXvar, borderTextureY2, armorWidgetX + 1 + i * armorSlot_length, armorWidgetY + endPieceOffset, armorSlot_length, borderLength);
                         }
                     }
                 }
                 if (style == ArmorHudConfig.Style.Rounded) {
                     // left-right borders
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, offhandTextureX, offhandTextureY, borderLength, armorSlot_borderedLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endBorderOffset, armorWidgetY, offhandTextureX + endPieceOffset, offhandTextureY, borderLength, armorSlot_borderedLength);
+                    context.drawGuiTexture(armorHud_OFFHAND_TEXTURE, 29, 24, 0, 1, armorWidgetX, armorWidgetY, borderLength, armorSlot_borderedLength);
+                    context.drawGuiTexture(armorHud_OFFHAND_TEXTURE, 29, 24, endPieceOffset, 1, armorWidgetX + endBorderOffset, armorWidgetY, borderLength, armorSlot_borderedLength);
                 } else {
                     // left border
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY, 0, 0, borderLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + borderLength, 0, borderTextureY1, borderLength, slotLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX, armorWidgetY + endPieceOffset, 0, borderTextureY2, borderLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, 0, armorWidgetX, armorWidgetY, borderLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, borderTextureY1, armorWidgetX, armorWidgetY + borderLength, borderLength, slotLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, 0, borderTextureY2, armorWidgetX, armorWidgetY + endPieceOffset, borderLength, borderLength);
                     // right border
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endBorderOffset, armorWidgetY, borderTextureX2, 0, borderLength, borderLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endBorderOffset, armorWidgetY + borderLength, borderTextureX2, borderTextureY1, borderLength, slotLength);
-                    context.drawTexture(armorHud_WIDGETS_TEXTURE, armorWidgetX + endBorderOffset, armorWidgetY + endPieceOffset, borderTextureX2, borderTextureY2, borderLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, 0, armorWidgetX + endBorderOffset, armorWidgetY, borderLength, borderLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, borderTextureY1, armorWidgetX + endBorderOffset, armorWidgetY + borderLength, borderLength, slotLength);
+                    context.drawGuiTexture(armorHud_HOTBAR_TEXTURE, 182, 22, borderTextureX2, borderTextureY2, armorWidgetX + endBorderOffset, armorWidgetY + endPieceOffset, borderLength, borderLength);
                 }
             }
         }
