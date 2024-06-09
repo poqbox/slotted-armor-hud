@@ -38,7 +38,6 @@ public class ArmorHudConfigScreenBuilder {
 
         ConfigCategory positionCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.position"));
         ConfigCategory appearanceCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.appearance"));
-        ConfigCategory utilityCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.utility"));
         ConfigCategory advancedCategory = configBuilder.getOrCreateCategory(Text.translatable("armorHud.configScreen.category.advanced"));
         ConfigEntryBuilder configEntryBuilder = configBuilder.entryBuilder();
 
@@ -56,10 +55,6 @@ public class ArmorHudConfigScreenBuilder {
         AbstractConfigListEntry<Boolean> pushBossbarsEntry;
         AbstractConfigListEntry<Boolean> pushStatusEffectIconsEntry;
         AbstractConfigListEntry<Boolean> pushSubtitlesEntry;
-        AbstractConfigListEntry<Boolean> warningEntry;
-        AbstractConfigListEntry<Integer> minDurabilityValueEntry;
-        AbstractConfigListEntry<Double> minDurabilityPercentageEntry;
-        AbstractConfigListEntry<Float> warningIconBobbingIntervalEntry;
         AbstractConfigListEntry<Integer> slotTexture1Entry;
         AbstractConfigListEntry<Integer> slotTexture2Entry;
         AbstractConfigListEntry<Integer> slotTexture3Entry;
@@ -234,62 +229,6 @@ public class ArmorHudConfigScreenBuilder {
                 })
                 .build();
         appearanceCategory.addEntry(pushSubtitlesEntry);
-
-        warningEntry = configEntryBuilder
-                .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.warningShown.name"), ArmorHudMod.getCurrentConfig().isWarningShown())
-                .setDefaultValue(defaultConfig.isWarningShown())
-                .setTooltip(Text.translatable("armorHud.configScreen.setting.warningShown.description"))
-                .setSaveConsumer((Boolean value) -> ArmorHudMod.temporaryConfig.setWarningShown(value))
-                .setErrorSupplier((Boolean value) -> {
-                    ArmorHudMod.previewConfig.setWarningShown(value);
-                    return Optional.empty();
-                })
-                .build();
-        utilityCategory.addEntry(warningEntry);
-
-        minDurabilityValueEntry = configEntryBuilder
-                .startIntField(Text.translatable("armorHud.configScreen.setting.minDurabilityValue.name"), ArmorHudMod.getCurrentConfig().getMinDurabilityValue())
-                .setDefaultValue(defaultConfig.getMinDurabilityValue())
-                .setTooltip(Text.translatable("armorHud.configScreen.setting.minDurabilityValue.description"))
-                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setMinDurabilityValue(value))
-                .setErrorSupplier((Integer value) -> {
-                    ArmorHudMod.previewConfig.setMinDurabilityValue(value);
-                    return Optional.empty();
-                })
-                .setMin(0)
-                .build();
-        utilityCategory.addEntry(minDurabilityValueEntry);
-
-        minDurabilityPercentageEntry = configEntryBuilder
-                .startDoubleField(Text.translatable("armorHud.configScreen.setting.minDurabilityPercentage.name"), ArmorHudMod.getCurrentConfig().getMinDurabilityPercentage() * 100.0D)
-                .setDefaultValue(defaultConfig.getMinDurabilityPercentage() * 100.0D)
-                .setTooltip(Text.translatable("armorHud.configScreen.setting.minDurabilityPercentage.description"))
-                .setSaveConsumer((Double value) -> ArmorHudMod.temporaryConfig.setMinDurabilityPercentage(value / 100.0D))
-                .setErrorSupplier((Double value) -> {
-                    ArmorHudMod.previewConfig.setMinDurabilityPercentage(value / 100.0D);
-                    return Optional.empty();
-                })
-                .setMin(0.0D)
-                .setMax(100.0D)
-                .build();
-        utilityCategory.addEntry(minDurabilityPercentageEntry);
-
-        final float minWarningIconBobbingInterval = 0.2F;
-        warningIconBobbingIntervalEntry = configEntryBuilder
-                .startFloatField(Text.translatable("armorHud.configScreen.setting.warningIconBobbingIntervalEntry.name"), ArmorHudMod.getCurrentConfig().getWarningIconBobbingIntervalMs() / 1000.0F)
-                .setDefaultValue(defaultConfig.getWarningIconBobbingIntervalMs() / 1000.0F)
-                .setTooltip(Text.translatable("armorHud.configScreen.setting.warningIconBobbingIntervalEntry.description"))
-                .setSaveConsumer((Float value) -> ArmorHudMod.temporaryConfig.setWarningIconBobbingIntervalMs(value * 1000.0F))
-                .setErrorSupplier((Float value) -> {
-                    if (value != 0.0F && value < minWarningIconBobbingInterval)//
-                        return Optional.of(Text.translatable("text.cloth-config.error.too_small", minWarningIconBobbingInterval));
-                    ArmorHudMod.previewConfig.setWarningIconBobbingIntervalMs(value * 1000.0F);
-                    return Optional.empty();
-                })
-                //.setMin(minWarningIconBobbingInterval)
-                .setMax(5.0F)
-                .build();
-        utilityCategory.addEntry(warningIconBobbingIntervalEntry);
 
         slotTexture1Entry = configEntryBuilder
                 .startIntSlider(Text.translatable("armorHud.configScreen.setting.slotTexture1.name"), ArmorHudMod.getCurrentConfig().getSlotTextures()[0], 1, 9)

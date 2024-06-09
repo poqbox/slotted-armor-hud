@@ -26,10 +26,6 @@ public class ArmorHudConfig {
     protected boolean pushBossbars;
     protected boolean pushStatusEffectIcons;
     protected boolean pushSubtitles;
-    protected boolean warningShown;
-    protected int minDurabilityValue;
-    protected double minDurabilityPercentage;
-    protected float warningIconBobbingIntervalMs;
     protected int[] slotTextures;
     protected int borderLength;
     protected boolean matchBorderAndSlotTextures;
@@ -83,10 +79,6 @@ public class ArmorHudConfig {
         this.pushBossbars = true;
         this.pushStatusEffectIcons = true;
         this.pushSubtitles = true;
-        this.warningShown = false;
-        this.minDurabilityValue = 10;
-        this.minDurabilityPercentage = 0.115D;
-        this.warningIconBobbingIntervalMs = 2000.0F;
         this.slotTextures = new int[]{1, 1, 1, 1};
         this.borderLength = 3;
         this.matchBorderAndSlotTextures = false;
@@ -107,10 +99,6 @@ public class ArmorHudConfig {
         this.pushBossbars = original.pushBossbars;
         this.pushStatusEffectIcons = original.pushStatusEffectIcons;
         this.pushSubtitles = original.pushSubtitles;
-        this.warningShown = original.warningShown;
-        this.minDurabilityValue = original.minDurabilityValue;
-        this.minDurabilityPercentage = original.minDurabilityPercentage;
-        this.warningIconBobbingIntervalMs = original.warningIconBobbingIntervalMs;
         this.slotTextures = original.slotTextures;
         this.borderLength = original.borderLength;
         this.matchBorderAndSlotTextures = original.matchBorderAndSlotTextures;
@@ -210,22 +198,6 @@ public class ArmorHudConfig {
         return this.pushSubtitles;
     }
 
-    public boolean isWarningShown() {
-        return warningShown;
-    }
-
-    public int getMinDurabilityValue() {
-        return minDurabilityValue;
-    }
-
-    public double getMinDurabilityPercentage() {
-        return minDurabilityPercentage;
-    }
-
-    public float getWarningIconBobbingIntervalMs() {
-        return warningIconBobbingIntervalMs;
-    }
-
     public int[] getSlotTextures() {
         return slotTextures;
     }
@@ -302,22 +274,6 @@ public class ArmorHudConfig {
 
         public void setPushSubtitles(boolean pushSubtitles) {
             this.pushSubtitles = pushSubtitles;
-        }
-
-        public void setWarningShown(boolean warningShown) {
-            this.warningShown = warningShown;
-        }
-
-        public void setMinDurabilityValue(int minDurabilityValue) {
-            this.minDurabilityValue = minDurabilityValue;
-        }
-
-        public void setMinDurabilityPercentage(double minDurabilityPercentage) {
-            this.minDurabilityPercentage = minDurabilityPercentage;
-        }
-
-        public void setWarningIconBobbingIntervalMs(float warningIconBobbingIntervalMs) {
-            this.warningIconBobbingIntervalMs = warningIconBobbingIntervalMs;
         }
 
         public void setSlotTexture1(int slot) {

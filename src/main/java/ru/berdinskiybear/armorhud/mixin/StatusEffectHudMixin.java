@@ -51,21 +51,6 @@ public class StatusEffectHudMixin {
                         }
                         else
                             add += 22 + currentConfig.getOffsetY();
-                        if (currentConfig.isWarningShown() && this.armorHud_armorItems.stream().anyMatch((ItemStack itemStack) -> {
-                            if (itemStack.isDamageable()) {
-                                final int damage = itemStack.getDamage();
-                                final int maxDamage = itemStack.getMaxDamage();
-                                return ((1.0F - ((float) damage) / ((float) maxDamage) <= currentConfig.getMinDurabilityPercentage()) || (maxDamage - damage <= currentConfig.getMinDurabilityValue()));
-                            }
-                            return false;
-                        })) {
-                            if (currentConfig.getOrientation() == ArmorHudConfig.Orientation.Horizontal) {
-                                add += 2 + 8;
-                                if (currentConfig.getWarningIconBobbingIntervalMs() != 0.0F) {
-                                    add += 7;
-                                }
-                            }
-                        }
                     }
                 }
             }

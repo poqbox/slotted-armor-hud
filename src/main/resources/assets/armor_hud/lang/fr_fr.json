@@ -38,18 +38,6 @@
   "armorHud.configScreen.setting.iconsShown.name": "Montrer les icônes des cases vides",
   "armorHud.configScreen.setting.iconsShown.description": "Montre des icônes spéciales dans les cases vides.",
 
-  "armorHud.configScreen.setting.warningShown.name": "Afficher l'alerte de durabilité faible",
-  "armorHud.configScreen.setting.warningShown.description": "Fait apparaitre une alerte au-dessus de la case d'une pièce d'armue si sa durabilité est faible.",
-
-  "armorHud.configScreen.setting.minDurabilityValue.name": "Valeur minimale de durabilité",
-  "armorHud.configScreen.setting.minDurabilityValue.description": "Si la durabilité d'une pièce d'armure est plus petit ou égal à cette valeur l'alerte sera affichée.",
-
-  "armorHud.configScreen.setting.minDurabilityPercentage.name": "Pourcentage minimal de durabilité",
-  "armorHud.configScreen.setting.minDurabilityPercentage.description": "Si la durabilité d'une pièce d'armure est plus petit ou égal à ce pourcentage l'alerte sera affichée.",
-
-  "armorHud.configScreen.setting.warningIconBobbingIntervalEntry.name": "Durée de l'animation de l'alerte de durabilité",
-  "armorHud.configScreen.setting.warningIconBobbingIntervalEntry.description": "Ce paramètre défini la durée de l'animation de l'alerte de durabilité. Diminuer ce nombre augmente diminue la durée que prends l'animation à se jouer. Mettez cette valeur à 0 pour retire l'animation.",
-
   "armorHud.configScreen.setting.style.name": "Style des cases du widget",
   "armorHud.configScreen.setting.style.description": "Ce paramètre change l'apparence du widget. Si les cases du widget vous semblent bizzares (par exemple, si des parties de la textures ne rendent pas bien) avec votre pack de ressources, vous devriez essayer d'autres styles pour en trouver un qui rend bien et choisir celui que vous préférez."
 }

@@ -38,18 +38,6 @@
   "armorHud.configScreen.setting.iconsShown.name": "Mostra icone negli slot vuoti",
   "armorHud.configScreen.setting.iconsShown.description": "Mostra speciali icone negli slot vuoti.",
 
-  "armorHud.configScreen.setting.warningShown.name": "Mostra un avviso di bassa durabilità",
-  "armorHud.configScreen.setting.warningShown.description": "Se abilitato, mostrerà un piccolo avviso sui pezzi d'armatura e armi con bassa durabilità.",
-
-  "armorHud.configScreen.setting.minDurabilityValue.name": "Valore minimo di durabilità",
-  "armorHud.configScreen.setting.minDurabilityValue.description": "Se la durabilità di un pezzo di armatura è inferiore o uguale a questo valore, un avviso sarà mostrato.",
-
-  "armorHud.configScreen.setting.minDurabilityPercentage.name": "Percentuale minima di durabilità",
-  "armorHud.configScreen.setting.minDurabilityPercentage.description": "Se la percentuale di durabilità di un oggetto mostrato è uguale o inferiore a questo valore, un avviso sarà mostrato.",
-
-  "armorHud.configScreen.setting.warningIconBobbingIntervalEntry.name": "Velocità di movimento dell'avviso",
-  "armorHud.configScreen.setting.warningIconBobbingIntervalEntry.description": "Questo parametro definirà quanto velocemente l'icona dell'avviso si muoverà in alto e in basso quando mostrata. Un valore più basso risulterà in un movimento più veloce. Imposta il valore su 0 se vuoi disabilitare questo movimento.",
-
   "armorHud.configScreen.setting.style.name": "Stile degli slot",
   "armorHud.configScreen.setting.style.description": "Questa impostazione definisce come gli slot saranno mostrati sullo schermo. Se gli slot del widget hanno un aspetto strano (per esempio, parti di texture che non corrispondono) con il tuo pacchetto di risorse, prova con altri stili per trovare quelli che funzionano e scegli quello che preferisci."
 }

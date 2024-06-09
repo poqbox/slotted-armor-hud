@@ -11,7 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.random.Random;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -48,15 +47,8 @@ public abstract class InGameHudMixin {
     private static final int hotbar_offset = 98;
     private static final int offhandSlot_offset = 29;
     private static final int attackIndicator_offset = 23;
-    private static final int warningIcon_minHeight = 2;
-    private static final int warningIcon_maxHeight = 7;
-    private static final int warningIcon_offset = 7;
 
-    private long warningIcon_lastMeasuredTime;
-    private long warningIcon_measuredTime;
-    private float[] warningIcon_cycleProgress = null;
     private final List<ItemStack> armorItems = new ArrayList<>(4);
-    private final List<Integer> armorItemIndexes = new ArrayList<>(4);
 
     @Shadow
     protected abstract void renderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed);
@@ -72,10 +64,6 @@ public abstract class InGameHudMixin {
         // get current config
         ArmorHudConfig currentArmorHudConfig = this.armorHud_getCurrentArmorHudConfig();
 
-        // update measuring time fields
-        warningIcon_lastMeasuredTime = warningIcon_measuredTime;
-        warningIcon_measuredTime = Util.getMeasuringTimeMs();
-
         // switch to enable the mod
         if (currentArmorHudConfig.isEnabled()) {
             PlayerEntity playerEntity = this.getCameraPlayer();
@@ -85,15 +73,12 @@ public abstract class InGameHudMixin {
                 // count the items and save the ones that need to be drawn
                 List<ItemStack> armor = playerEntity.getInventory().armor;
                 armorItems.clear();
-                armorItemIndexes.clear();
                 for (int i = 0; i < armor.size(); i++) {
                     ItemStack itemStack = armor.get(i);
                     if (!itemStack.isEmpty())
                         amount++;
-                    if (!itemStack.isEmpty() || currentArmorHudConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Equipped) {
+                    if (!itemStack.isEmpty() || currentArmorHudConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Equipped)
                         armorItems.add(itemStack);
-                        armorItemIndexes.add(i);
-                    }
                 }
 
                 // if true, then prepare and draw
@@ -199,43 +184,6 @@ public abstract class InGameHudMixin {
                     context.getMatrices().translate(0, 0, -91);
                     this.drawSlots(context, armorWidgetX, armorWidgetY, currentArmorHudConfig.getOrientation(), currentArmorHudConfig.getStyle(), slotData, currentArmorHudConfig.getBorderLength(), currentArmorHudConfig.isMatchBorderAndSlotTextures());
                     context.getMatrices().pop();
-
-                    // here I draw warning icons if necessary
-                    if (currentArmorHudConfig.isWarningShown()) {
-                        context.getMatrices().push();
-                        context.getMatrices().translate(0, 0, 90);
-                        for (int i = 0; i < armorItems.size(); i++) {
-                            int iReversed = currentArmorHudConfig.isReversed() ? i : (armorItems.size() - i - 1);
-                            if (!armorItems.get(i).isEmpty() && armorItems.get(i).isDamageable()) {
-                                int damage = armorItems.get(i).getDamage();
-                                int maxDamage = armorItems.get(i).getMaxDamage();
-                                if ((1.0F - ((float) damage) / ((float) maxDamage) <= currentArmorHudConfig.getMinDurabilityPercentage()) || (maxDamage - damage <= currentArmorHudConfig.getMinDurabilityValue())) {
-                                    switch (currentArmorHudConfig.getOrientation()) {
-                                        case Horizontal -> context.drawTexture(armorHud_HOTBAR_TEXTURE,
-                                                    armorWidgetX
-                                                            + (armorSlot_length * iReversed)
-                                                            + warningIcon_offset,
-                                                    armorWidgetY
-                                                            + (armorSlot_borderedLength * (verticalOffsetMultiplier + 1))
-                                                            + (8 * verticalOffsetMultiplier)
-                                                            + ((warningIcon_minHeight + Math.round(Math.abs(this.armorHud_getCycleProgress(armorItemIndexes.get(i), currentArmorHudConfig) * 2.0F - 1.0F) * warningIcon_maxHeight)) * verticalMultiplier),
-                                                    238, 22, 8, 8);
-                                        case Vertical -> context.drawTexture(armorHud_HOTBAR_TEXTURE,
-                                                    armorWidgetX
-                                                            + (armorSlot_borderedLength * (sideOffsetMultiplier + 1))
-                                                            + (8 * sideOffsetMultiplier)
-                                                            + (4 * sideMultiplier),
-                                                    armorWidgetY
-                                                            + (armorSlot_length * iReversed)
-                                                            + warningIcon_offset
-                                                            + ((warningIcon_minHeight + Math.round(Math.abs(this.armorHud_getCycleProgress(armorItemIndexes.get(i), currentArmorHudConfig) * 2.0F - 1.0F) * warningIcon_maxHeight) - 8) * verticalMultiplier),
-                                                    238, 22, 8, 8);
-                                    }
-                                }
-                            }
-                        }
-                        context.getMatrices().pop();
-                    }
 
                     // here I blend in slot icons
                     if (currentArmorHudConfig.isEmptyIconsShown()) {
@@ -410,21 +358,6 @@ public abstract class InGameHudMixin {
                 }
             }
         }
-    }
-
-    private float armorHud_getCycleProgress(int index, ArmorHudConfig currentArmorHudConfig) {
-        if (warningIcon_cycleProgress == null)
-            warningIcon_cycleProgress = new float[]{this.random.nextFloat(), this.random.nextFloat(), this.random.nextFloat(), this.random.nextFloat()};
-        if (currentArmorHudConfig.getWarningIconBobbingIntervalMs() == 0.0F)
-            return 0.5F;
-        if (!this.client.isPaused() || currentArmorHudConfig.isPreview()) {
-            // update progress when icons are bobbing
-            warningIcon_cycleProgress[index] += (warningIcon_measuredTime - warningIcon_lastMeasuredTime) / currentArmorHudConfig.getWarningIconBobbingIntervalMs();
-            warningIcon_cycleProgress[index] %= 1.0F;
-            if (warningIcon_cycleProgress[index] < 0 || Float.isNaN(warningIcon_cycleProgress[index]))
-                warningIcon_cycleProgress[index] = this.random.nextFloat();
-        }
-        return warningIcon_cycleProgress[index];
     }
 
     /**

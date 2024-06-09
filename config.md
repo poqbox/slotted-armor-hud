@@ -84,17 +84,3 @@ inside curly brackets). If any of the configuration parameters are missing, thei
 1. ##### `"warningShown"`
     * Displays a warning icon beside low-durability items.
     * Default value: `false`
-### Low-durability indicator
-1. ##### `"minDurabilityValue"`
-    * If an item's durability falls below this value,
-      a warning icon will be displayed.
-    * Default value: `10`
-1. ##### `"minDurabilityPercentage"`
-    * If an item's durability falls below this percentage,
-      a warning icon will be displayed.
-    * Default value: `0.115`
-1. ##### `"warningIconBobbingIntervalMs"`
-    * Defines how quickly the warning icons will move up and down.
-    * A lower the number quickens the motion.
-    * To disable bobbing, set to 0.
-    * Default value: `2000.0`
