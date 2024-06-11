@@ -39,13 +39,13 @@
     "armor_hud.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.18",
-    "minecraft": ">=1.20.2 <=1.20.4",
-    "java": ">=17"
+    "fabricloader": ">=0.15.10",
+    "minecraft": ">=1.20.5 <=1.20.6",
+    "java": ">=21"
   },
   "recommends": {
     "fabric-resource-loader-v0": "*",
-    "cloth-config2": ">=12.0.108",
-    "modmenu": ">=8.0.0"
+    "cloth-config2": ">=14.0.126",
+    "modmenu": ">=10.0.0-beta.1"
   }
 }
