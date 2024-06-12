@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,7 +22,9 @@ public class SubtitlesHudMixin {
 
     @Shadow @Final private MinecraftClient client;
 
+    @Unique
     private int offset = 0;
+    @Unique
     private final List<ItemStack> armorHud_armorItems = new ArrayList<>(4);
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Ljava/lang/String;)I", ordinal = 3, shift = At.Shift.BY, by = 4))
@@ -69,10 +72,12 @@ public class SubtitlesHudMixin {
      *
      * @return Current config
      */
+    @Unique
     private ArmorHudConfig armorHud_getCurrentArmorHudConfig() {
         return this.client.currentScreen != null && this.client.currentScreen.getTitle() == ArmorHudMod.CONFIG_SCREEN_NAME ? ArmorHudMod.previewConfig : ArmorHudMod.getCurrentConfig();
     }
 
+    @Unique
     private PlayerEntity getCameraPlayer() {
         return !(this.client.getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity) this.client.getCameraEntity();
     }

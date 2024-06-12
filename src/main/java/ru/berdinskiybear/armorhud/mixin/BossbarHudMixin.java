@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import ru.berdinskiybear.armorhud.ArmorHudMod;
@@ -19,6 +20,7 @@ public class BossbarHudMixin {
 
     @Shadow @Final private MinecraftClient client;
 
+    @Unique
     private final List<ItemStack> armorHud_armorItems = new ArrayList<>(4);
 
     @ModifyVariable(method = "render", at = @At(value = "STORE", ordinal = 0), ordinal = 1)
@@ -61,10 +63,12 @@ public class BossbarHudMixin {
      *
      * @return Current config
      */
+    @Unique
     private ArmorHudConfig armorHud_getCurrentArmorHudConfig() {
         return this.client.currentScreen != null && this.client.currentScreen.getTitle() == ArmorHudMod.CONFIG_SCREEN_NAME ? ArmorHudMod.previewConfig : ArmorHudMod.getCurrentConfig();
     }
 
+    @Unique
     private PlayerEntity getCameraPlayer() {
         return !(this.client.getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity) this.client.getCameraEntity();
     }

@@ -15,6 +15,7 @@ import net.minecraft.util.math.random.Random;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,27 +28,40 @@ import java.util.Map;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
-    @Shadow @Final private MinecraftClient client;
-    @Shadow @Final private Random random;
+    @Shadow @Final
+    private MinecraftClient client;
+    @Shadow @Final
+    private Random random;
 
-    @Shadow private int scaledWidth;
-    @Shadow private int scaledHeight;
-
+    @Unique
     private static final Identifier armorHud_HOTBAR_TEXTURE = new Identifier("hud/hotbar");
+    @Unique
     private static final Identifier armorHud_OFFHAND_TEXTURE = new Identifier("hud/hotbar_offhand_left");
+    @Unique
     private static final Identifier armorHud_EMPTY_HELMET_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_helmet");
+    @Unique
     private static final Identifier armorHud_EMPTY_CHESTPLATE_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_chestplate");
+    @Unique
     private static final Identifier armorHud_EMPTY_LEGGINGS_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_leggings");
+    @Unique
     private static final Identifier armorHud_EMPTY_BOOTS_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_boots");
+    @Unique
     private static final Identifier armorHud_BLOCK_ATLAS_TEXTURE = new Identifier("textures/atlas/blocks.png");
 
+    @Unique
     private static final int armorSlot_length = 20;
+    @Unique
     private static final int armorSlot_borderedLength = 22;
+    @Unique
     private static final int hotbar_width = 182;
+    @Unique
     private static final int hotbar_offset = 98;
+    @Unique
     private static final int offhandSlot_offset = 29;
+    @Unique
     private static final int attackIndicator_offset = 23;
 
+    @Unique
     private final List<ItemStack> armorItems = new ArrayList<>(4);
 
     @Shadow
@@ -56,7 +70,7 @@ public abstract class InGameHudMixin {
     @Shadow
     protected abstract PlayerEntity getCameraPlayer();
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER))
+    @Inject(method = "render", at = @At("TAIL"))
     public void armorHud_renderArmorHud(DrawContext context, float tickDelta, CallbackInfo ci) {
         // add this to profiler
         this.client.getProfiler().push("armorHud");
@@ -83,6 +97,8 @@ public abstract class InGameHudMixin {
 
                 // if true, then prepare and draw
                 if (amount > 0 || currentArmorHudConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show) {
+                    final int scaledWidth = this.client.getWindow().getScaledWidth();
+                    final int scaledHeight = this.client.getWindow().getScaledHeight();
                     final int armorWidgetY;
                     final int armorWidgetX;
                     final int sideMultiplier;
@@ -137,26 +153,26 @@ public abstract class InGameHudMixin {
                         switch (currentArmorHudConfig.getOrientation()) {
                             case Horizontal -> {
                                 armorWidgetX1 = switch (currentArmorHudConfig.getAnchor()) {
-                                    case Top_Center -> this.scaledWidth / 2 - (armorHud_longestLength / 2);
-                                    case Top, Bottom -> (armorHud_longestLength - this.scaledWidth) * sideOffsetMultiplier;
-                                    case Hotbar -> this.scaledWidth / 2 + ((hotbar_offset + addedHotbarOffset) * sideMultiplier) + (armorHud_longestLength * sideOffsetMultiplier);
+                                    case Top_Center -> scaledWidth / 2 - (armorHud_longestLength / 2);
+                                    case Top, Bottom -> (armorHud_longestLength - scaledWidth) * sideOffsetMultiplier;
+                                    case Hotbar -> scaledWidth / 2 + ((hotbar_offset + addedHotbarOffset) * sideMultiplier) + (armorHud_longestLength * sideOffsetMultiplier);
                                     default -> throw new IllegalStateException("Unexpected value: " + currentArmorHudConfig.getAnchor());
                                 };
                                 armorWidgetY1 = switch (currentArmorHudConfig.getAnchor()) {
-                                    case Bottom, Hotbar -> this.scaledHeight - armorSlot_borderedLength;
+                                    case Bottom, Hotbar -> scaledHeight - armorSlot_borderedLength;
                                     case Top, Top_Center -> 0;
                                     default -> throw new IllegalStateException("Unexpected value: " + currentArmorHudConfig.getAnchor());
                                 };
                             }
                             case Vertical -> {
                                 armorWidgetX1 = switch (currentArmorHudConfig.getAnchor()) {
-                                    case Top_Center -> this.scaledWidth / 2 - (armorSlot_borderedLength / 2);
-                                    case Top, Bottom -> (armorSlot_borderedLength - this.scaledWidth) * sideOffsetMultiplier;
-                                    case Hotbar -> this.scaledWidth / 2 + ((hotbar_offset + addedHotbarOffset) * sideMultiplier) + (armorSlot_borderedLength * sideOffsetMultiplier);
+                                    case Top_Center -> scaledWidth / 2 - (armorSlot_borderedLength / 2);
+                                    case Top, Bottom -> (armorSlot_borderedLength - scaledWidth) * sideOffsetMultiplier;
+                                    case Hotbar -> scaledWidth / 2 + ((hotbar_offset + addedHotbarOffset) * sideMultiplier) + (armorSlot_borderedLength * sideOffsetMultiplier);
                                     default -> throw new IllegalStateException("Unexpected value: " + currentArmorHudConfig.getAnchor());
                                 };
                                 armorWidgetY1 = switch (currentArmorHudConfig.getAnchor()) {
-                                    case Bottom, Hotbar -> this.scaledHeight - armorHud_longestLength;
+                                    case Bottom, Hotbar -> scaledHeight - armorHud_longestLength;
                                     case Top, Top_Center -> 0;
                                     default -> throw new IllegalStateException("Unexpected value: " + currentArmorHudConfig.getAnchor());
                                 };
@@ -229,6 +245,7 @@ public abstract class InGameHudMixin {
         this.client.getProfiler().pop();
     }
 
+    @Unique
     private void drawSlots(DrawContext context, int armorWidgetX, int armorWidgetY, ArmorHudConfig.Orientation orientation, ArmorHudConfig.Style style, int[] slots, int borderLength, boolean matchBorderAndSlotTextures) {
         final Map<Integer, Integer> armorHud_slotTextureX = new HashMap<Integer, Integer>();
         for (int i = 0; i < 9; i++)
@@ -366,6 +383,7 @@ public abstract class InGameHudMixin {
      *
      * @return Current config
      */
+    @Unique
     private ArmorHudConfig armorHud_getCurrentArmorHudConfig() {
         return this.client.currentScreen != null && this.client.currentScreen.getTitle() == ArmorHudMod.CONFIG_SCREEN_NAME ? ArmorHudMod.previewConfig : ArmorHudMod.getCurrentConfig();
     }
