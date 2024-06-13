@@ -65,7 +65,7 @@ public abstract class InGameHudMixin {
     @Shadow
     protected abstract PlayerEntity getCameraPlayer();
 
-    @Inject(method = "render", at = @At("TAIL"))
+    @Inject(method = "renderHotbar", at = @At("TAIL"))
     public void renderArmorHud(DrawContext context, float tickDelta, CallbackInfo ci) {
         // add this to profiler
         this.client.getProfiler().push("armorHud");
