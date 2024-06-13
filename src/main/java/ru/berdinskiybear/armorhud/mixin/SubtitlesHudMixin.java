@@ -36,11 +36,19 @@ public class SubtitlesHudMixin {
                 PlayerEntity playerEntity = this.getCameraPlayer();
                 if (playerEntity != null) {
                     this.armorItems.clear();
-                    for (ItemStack itemStack : playerEntity.getInventory().armor) {
-                        if (!itemStack.isEmpty())
-                            amount++;
-                        if (!itemStack.isEmpty() || config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped)
-                            this.armorItems.add(itemStack);
+                    if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)
+                        amount = 4;
+                    else {
+                        List<ItemStack> armorList = playerEntity.getInventory().armor;
+                        for (ItemStack itemStack : armorList) {
+                            if (!itemStack.isEmpty()) {
+                                amount++;
+                                if (config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped) {
+                                    amount = 4;
+                                    break;
+                                }
+                            }
+                        }
                     }
 
                     if (amount != 0 && config.getOffsetY() > config.getMinOffsetBeforePushingSubtitles())

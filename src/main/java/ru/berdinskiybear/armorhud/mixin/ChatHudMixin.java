@@ -1,8 +1,8 @@
 package ru.berdinskiybear.armorhud.mixin;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -11,15 +11,14 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.berdinskiybear.armorhud.ArmorHudMod;
 import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mixin(InGameHud.class)
-public class StatusEffectHudMixin {
+@Mixin(ChatHud.class)
+public class ChatHudMixin {
     @Shadow @Final private MinecraftClient client;
 
     @Unique
@@ -27,12 +26,12 @@ public class StatusEffectHudMixin {
     @Unique
     private final List<ItemStack> armorItems = new ArrayList<>(4);
 
-    @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;", shift = At.Shift.BY, by = 2))
-    public void calculateOffset(DrawContext context, float tickDelta, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getProfiler()Lnet/minecraft/util/profiler/Profiler;", shift = At.Shift.AFTER))
+    public void calculateOffset(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         ArmorHudConfig config = this.getArmorHudConfig();
-        if (config.isEnabled() && config.isPushStatusEffectIcons()) {
+        if (config.isEnabled() && config.isPushChatBox()) {
             int add = 0;
-            if (config.getAnchor() == ArmorHudConfig.Anchor.Top && config.getSide() == ArmorHudConfig.Side.Right) {
+            if (config.getAnchor() == ArmorHudConfig.Anchor.Bottom && config.getSide() == ArmorHudConfig.Side.Left && config.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
                 int amount = 0;
                 PlayerEntity playerEntity = this.getCameraPlayer();
                 if (playerEntity != null) {
@@ -52,8 +51,8 @@ public class StatusEffectHudMixin {
                         }
                     }
 
-                    if (amount != 0)
-                        add += 22 + config.getOffsetY();
+                    if (amount != 0 && config.getOffsetY() > config.getMinOffsetBeforePushingChatBox())
+                        add += config.getOffsetY() - config.getMinOffsetBeforePushingChatBox();
                     if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
                         add += 20 * (amount - 1);
                 }
@@ -63,9 +62,9 @@ public class StatusEffectHudMixin {
             this.offset = 0;
     }
 
-    @ModifyVariable(method = "renderStatusEffectOverlay", at = @At(value = "STORE", ordinal = 0), ordinal = 3)
-    public int statusEffectIconsOffset(int y) {
-        return y + this.offset;
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", shift = At.Shift.AFTER, ordinal = 0))
+    public void offset(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+        context.getMatrices().translate(0.0F, -((float) this.offset), 0.0F);
     }
 
     /**

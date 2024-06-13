@@ -7,19 +7,6 @@ inside curly brackets). If any of the configuration parameters are missing, thei
 1. ##### `"enabled"`
     * Toggles the armor HUD on and off.
     * Default value: `true`
-1. ##### `"orientation"`
-   * Orientation of the armor HUD.
-   * Possible values:
-      * `"Horizontal"`
-      * `"Vertical"`
-   * Default value: `"Horizontal"`
-1. ##### `"side"`
-    * Side that the armor HUD is displayed on.
-    * Works in conjunction with 'Anchor'.
-    * Possible values:
-        * `"Left"`
-        * `"Right"`
-    * Default value: `"Left"`
 1. ##### `"anchor"`
     * Place that the armor HUD is attached to.
     * Works in conjunction with 'Side'.
@@ -29,6 +16,19 @@ inside curly brackets). If any of the configuration parameters are missing, thei
         * `"Top"`: armor HUD is placed at the top corner of the preferred side.
         * `"Top_Center"`: armor HUD is placed at the top center.
     * Default value: `Hotbar`
+1. ##### `"side"`
+   * Side that the armor HUD is displayed on.
+   * Works in conjunction with 'Anchor'.
+   * Possible values:
+      * `"Left"`
+      * `"Right"`
+   * Default value: `"Left"`
+1. ##### `"orientation"`
+   * Orientation of the armor HUD.
+   * Possible values:
+      * `"Horizontal"`
+      * `"Vertical"`
+   * Default value: `"Horizontal"`
 1. ##### `"offhandSlotBehavior"`
     * Defines how the armor HUD reacts to the offhand slot and the attack indicator.
     * Effects the armor HUD when anchored to the hotbar.

@@ -13,8 +13,8 @@ import java.io.IOException;
 public class ArmorHudConfig {
 
     protected boolean enabled;
-    protected Side side;
     protected Anchor anchor;
+    protected Side side;
     protected Orientation orientation;
     protected OffhandSlotBehavior offhandSlotBehavior;
     protected int offsetX;
@@ -24,16 +24,20 @@ public class ArmorHudConfig {
     protected boolean emptyIconsShown;
     protected boolean reversed;
     protected boolean pushBossbars;
+    protected boolean pushChatBox;
     protected boolean pushStatusEffectIcons;
     protected boolean pushSubtitles;
     protected int[] slotTextures;
     protected int borderLength;
     protected boolean matchBorderAndSlotTextures;
+    protected int minOffsetBeforePushingChatBox;
     protected int minOffsetBeforePushingSubtitles;
 
-    public enum Orientation {
-        Horizontal,
-        Vertical
+    public enum Anchor {
+        Hotbar,
+        Bottom,
+        Top,
+        Top_Center
     }
 
     public enum Side {
@@ -41,11 +45,9 @@ public class ArmorHudConfig {
         Right
     }
 
-    public enum Anchor {
-        Hotbar,
-        Bottom,
-        Top,
-        Top_Center
+    public enum Orientation {
+        Horizontal,
+        Vertical
     }
 
     public enum OffhandSlotBehavior {
@@ -67,30 +69,32 @@ public class ArmorHudConfig {
 
     public ArmorHudConfig() {
         this.enabled = true;
-        this.orientation = Orientation.Horizontal;
-        this.side = Side.Left;
         this.anchor = Anchor.Hotbar;
+        this.side = Side.Left;
+        this.orientation = Orientation.Horizontal;
         this.offhandSlotBehavior = OffhandSlotBehavior.Leave_Space;
-        this.offsetX = 1;
-        this.offsetY = 1;
+        this.offsetX = 0;
+        this.offsetY = 0;
         this.style = Style.Squared;
         this.slotsShown = SlotsShown.Show_Equipped;
         this.emptyIconsShown = true;
         this.reversed = false;
         this.pushBossbars = true;
+        this.pushChatBox = true;
         this.pushStatusEffectIcons = true;
         this.pushSubtitles = true;
         this.slotTextures = new int[]{1, 2, 3, 4};
         this.borderLength = 3;
         this.matchBorderAndSlotTextures = true;
-        this.minOffsetBeforePushingSubtitles = 1;
+        this.minOffsetBeforePushingChatBox = 0;
+        this.minOffsetBeforePushingSubtitles = 0;
     }
 
     public ArmorHudConfig(ArmorHudConfig original) {
         this.enabled = original.enabled;
-        this.orientation = original.orientation;
-        this.side = original.side;
         this.anchor = original.anchor;
+        this.side = original.side;
+        this.orientation = original.orientation;
         this.offhandSlotBehavior = original.offhandSlotBehavior;
         this.offsetX = original.offsetX;
         this.offsetY = original.offsetY;
@@ -99,10 +103,12 @@ public class ArmorHudConfig {
         this.emptyIconsShown = original.emptyIconsShown;
         this.reversed = original.reversed;
         this.pushBossbars = original.pushBossbars;
+        this.pushChatBox = original.pushChatBox;
         this.pushStatusEffectIcons = original.pushStatusEffectIcons;
         this.pushSubtitles = original.pushSubtitles;
         this.slotTextures = original.slotTextures;
         this.borderLength = original.borderLength;
+        this.minOffsetBeforePushingChatBox = original.minOffsetBeforePushingChatBox;
         this.matchBorderAndSlotTextures = original.matchBorderAndSlotTextures;
         this.minOffsetBeforePushingSubtitles = original.minOffsetBeforePushingSubtitles;
     }
@@ -149,16 +155,16 @@ public class ArmorHudConfig {
         return enabled;
     }
 
-    public Orientation getOrientation() {
-        return orientation;
+    public Anchor getAnchor() {
+        return anchor;
     }
 
     public Side getSide() {
         return side;
     }
 
-    public Anchor getAnchor() {
-        return anchor;
+    public Orientation getOrientation() {
+        return orientation;
     }
 
     public OffhandSlotBehavior getOffhandSlotBehavior() {
@@ -193,6 +199,10 @@ public class ArmorHudConfig {
         return this.pushBossbars;
     }
 
+    public boolean isPushChatBox() {
+        return this.pushChatBox;
+    }
+
     public boolean isPushStatusEffectIcons() {
         return this.pushStatusEffectIcons;
     }
@@ -213,6 +223,10 @@ public class ArmorHudConfig {
         return matchBorderAndSlotTextures;
     }
 
+    public int getMinOffsetBeforePushingChatBox() {
+        return minOffsetBeforePushingChatBox;
+    }
+
     public int getMinOffsetBeforePushingSubtitles() {
         return minOffsetBeforePushingSubtitles;
     }
@@ -231,16 +245,16 @@ public class ArmorHudConfig {
             this.enabled = enabled;
         }
 
-        public void setOrientation(Orientation orientation) {
-            this.orientation = orientation;
+        public void setAnchor(Anchor anchor) {
+            this.anchor = anchor;
         }
 
         public void setSide(Side side) {
             this.side = side;
         }
 
-        public void setAnchor(Anchor anchor) {
-            this.anchor = anchor;
+        public void setOrientation(Orientation orientation) {
+            this.orientation = orientation;
         }
 
         public void setOffhandSlotBehavior(OffhandSlotBehavior offhandSlotBehavior) {
@@ -275,6 +289,10 @@ public class ArmorHudConfig {
             this.pushBossbars = pushBossbars;
         }
 
+        public void setPushChatBox(boolean pushChatBox) {
+            this.pushChatBox = pushChatBox;
+        }
+
         public void setPushStatusEffectIcons(boolean pushStatusEffectIcons) {
             this.pushStatusEffectIcons = pushStatusEffectIcons;
         }
@@ -305,6 +323,10 @@ public class ArmorHudConfig {
 
         public void setMatchBorderAndSlotTextures(boolean matchBorderAndSlotTextures) {
             this.matchBorderAndSlotTextures = matchBorderAndSlotTextures;
+        }
+
+        public void setMinOffsetBeforePushingChatBox(int minOffsetBeforePushingChatBox) {
+            this.minOffsetBeforePushingChatBox = minOffsetBeforePushingChatBox;
         }
 
         public void setMinOffsetBeforePushingSubtitles(int minOffsetBeforePushingSubtitles) {
