@@ -32,18 +32,25 @@ public class BossbarHudMixin {
                 PlayerEntity playerEntity = this.getCameraPlayer();
                 if (playerEntity != null) {
                     this.armorItems.clear();
-                    for (ItemStack itemStack : playerEntity.getInventory().armor) {
-                        if (!itemStack.isEmpty())
-                            amount++;
-                        if (!itemStack.isEmpty() || config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped)
-                            this.armorItems.add(itemStack);
+                    if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)
+                        amount = 4;
+                    else {
+                        List<ItemStack> armorList = playerEntity.getInventory().armor;
+                        for (ItemStack itemStack : armorList) {
+                            if (!itemStack.isEmpty()) {
+                                amount++;
+                                if (config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped) {
+                                    amount = 4;
+                                    break;
+                                }
+                            }
+                        }
                     }
 
-                    if (!(amount == 0 && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Always_Show)) {
-                        if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
-                            add += 20 * (amount - 1);
+                    if (amount != 0)
                         add += 22 + config.getOffsetY();
-                    }
+                    if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
+                        add += 20 * (amount - 1);
                 }
             }
             return offset + Math.max(add, 0);
