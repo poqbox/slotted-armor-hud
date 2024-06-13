@@ -169,7 +169,8 @@ public abstract class InGameHudMixin {
                             }
                             default -> throw new IllegalStateException("Unexpected value: " + config.getOrientation());
                         }
-                        armorWidgetX1 += config.getOffsetX() * sideMultiplier;
+                        if (config.getAnchor() != ArmorHudConfig.Anchor.Top_Center)
+                            armorWidgetX1 += config.getOffsetX() * sideMultiplier;
                         armorWidgetY1 += config.getOffsetY() * verticalMultiplier;
 
                         armorWidgetX = armorWidgetX1;
