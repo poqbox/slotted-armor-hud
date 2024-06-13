@@ -61,6 +61,7 @@ public class ArmorHudConfigScreenBuilder {
         AbstractConfigListEntry<Integer> slotTexture4Entry;
         AbstractConfigListEntry<Integer> borderLengthEntry;
         AbstractConfigListEntry<Boolean> matchBorderAndSlotTexturesEntry;
+        AbstractConfigListEntry<Integer> minOffsetBeforePushingSubtitlesEntry;
 
         enabledEntry = configEntryBuilder
                 .startBooleanToggle(Text.translatable("armorHud.configScreen.setting.enable.name"), ArmorHudMod.getConfig().isEnabled())
@@ -301,6 +302,18 @@ public class ArmorHudConfigScreenBuilder {
                 })
                 .build();
         advancedCategory.addEntry(matchBorderAndSlotTexturesEntry);
+
+        minOffsetBeforePushingSubtitlesEntry = configEntryBuilder
+                .startIntField(Text.translatable("armorHud.configScreen.setting.minOffsetBeforePushingSubtitles.name"), ArmorHudMod.getConfig().getMinOffsetBeforePushingSubtitles())
+                .setDefaultValue(defaultConfig.getMinOffsetBeforePushingSubtitles())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.minOffsetBeforePushingSubtitles.description"))
+                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setMinOffsetBeforePushingSubtitles(value))
+                .setErrorSupplier((Integer value) -> {
+                    ArmorHudMod.previewConfig.setMinOffsetBeforePushingSubtitles(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(minOffsetBeforePushingSubtitlesEntry);
 
         return configBuilder.build();
     }

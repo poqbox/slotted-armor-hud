@@ -29,6 +29,7 @@ public class ArmorHudConfig {
     protected int[] slotTextures;
     protected int borderLength;
     protected boolean matchBorderAndSlotTextures;
+    protected int minOffsetBeforePushingSubtitles;
 
     public enum Orientation {
         Horizontal,
@@ -79,9 +80,10 @@ public class ArmorHudConfig {
         this.pushBossbars = true;
         this.pushStatusEffectIcons = true;
         this.pushSubtitles = true;
-        this.slotTextures = new int[]{1, 1, 1, 1};
+        this.slotTextures = new int[]{1, 2, 3, 4};
         this.borderLength = 3;
-        this.matchBorderAndSlotTextures = false;
+        this.matchBorderAndSlotTextures = true;
+        this.minOffsetBeforePushingSubtitles = 1;
     }
 
     public ArmorHudConfig(ArmorHudConfig original) {
@@ -102,6 +104,7 @@ public class ArmorHudConfig {
         this.slotTextures = original.slotTextures;
         this.borderLength = original.borderLength;
         this.matchBorderAndSlotTextures = original.matchBorderAndSlotTextures;
+        this.minOffsetBeforePushingSubtitles = original.minOffsetBeforePushingSubtitles;
     }
 
     public static ArmorHudConfig readConfigFile() {
@@ -210,6 +213,10 @@ public class ArmorHudConfig {
         return matchBorderAndSlotTextures;
     }
 
+    public int getMinOffsetBeforePushingSubtitles() {
+        return minOffsetBeforePushingSubtitles;
+    }
+
     public static class MutableConfig extends ArmorHudConfig {
 
         public MutableConfig() {
@@ -298,6 +305,10 @@ public class ArmorHudConfig {
 
         public void setMatchBorderAndSlotTextures(boolean matchBorderAndSlotTextures) {
             this.matchBorderAndSlotTextures = matchBorderAndSlotTextures;
+        }
+
+        public void setMinOffsetBeforePushingSubtitles(int minOffsetBeforePushingSubtitles) {
+            this.minOffsetBeforePushingSubtitles = minOffsetBeforePushingSubtitles;
         }
     }
 }

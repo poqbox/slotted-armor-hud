@@ -43,16 +43,10 @@ public class SubtitlesHudMixin {
                             this.armorItems.add(itemStack);
                     }
 
-                    if (!(amount == 0 && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Always_Show)) {
-                        if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
-                            if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
-                                add += 20 * (amount - 1) + config.getOffsetY();
-                            else
-                                add += 60 + config.getOffsetY();
-                        }
-                        else
-                            add += config.getOffsetY();
-                    }
+                    if (amount != 0 && config.getOffsetY() > config.getMinOffsetBeforePushingSubtitles())
+                        add += config.getOffsetY() - config.getMinOffsetBeforePushingSubtitles();
+                    if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
+                        add += 20 * (amount - 1);
                 }
             }
             this.offset = Math.max(add, 0);

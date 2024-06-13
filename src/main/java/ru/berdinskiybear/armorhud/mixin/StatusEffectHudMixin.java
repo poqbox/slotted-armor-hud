@@ -45,14 +45,9 @@ public class StatusEffectHudMixin {
                     }
 
                     if (!(amount == 0 && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Always_Show)) {
-                        if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
-                            if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
-                                add += 22 + 20 * (amount - 1) + config.getOffsetY();
-                            else
-                                add += 82 + config.getOffsetY();
-                        }
-                        else
-                            add += 22 + config.getOffsetY();
+                        if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
+                            add += 20 * (amount - 1);
+                        add += 22 + config.getOffsetY();
                     }
                 }
             }
