@@ -17,38 +17,37 @@ import java.util.List;
 
 @Mixin(BossBarHud.class)
 public class BossbarHudMixin {
-
     @Shadow @Final private MinecraftClient client;
 
     @Unique
-    private final List<ItemStack> armorHud_armorItems = new ArrayList<>(4);
+    private final List<ItemStack> armorItems = new ArrayList<>(4);
 
     @ModifyVariable(method = "render", at = @At(value = "STORE", ordinal = 0), ordinal = 1)
     public int calculateOffset(int offset) {
-        ArmorHudConfig currentConfig = this.armorHud_getCurrentArmorHudConfig();
-        if (currentConfig.isEnabled() && currentConfig.isPushBossbars()) {
+        ArmorHudConfig config = this.getArmorHudConfig();
+        if (config.isEnabled() && config.isPushBossbars()) {
             int add = 0;
-            if (currentConfig.getAnchor() == ArmorHudConfig.Anchor.Top_Center) {
+            if (config.getAnchor() == ArmorHudConfig.Anchor.Top_Center) {
                 int amount = 0;
                 PlayerEntity playerEntity = this.getCameraPlayer();
                 if (playerEntity != null) {
-                    this.armorHud_armorItems.clear();
+                    this.armorItems.clear();
                     for (ItemStack itemStack : playerEntity.getInventory().armor) {
                         if (!itemStack.isEmpty())
                             amount++;
-                        if (!itemStack.isEmpty() || currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped)
-                            this.armorHud_armorItems.add(itemStack);
+                        if (!itemStack.isEmpty() || config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped)
+                            this.armorItems.add(itemStack);
                     }
 
-                    if (!(amount == 0 && currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Always_Show)) {
-                        if (currentConfig.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
-                            if (currentConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
-                                add += 22 + 20 * (amount - 1) + currentConfig.getOffsetY();
+                    if (!(amount == 0 && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Always_Show)) {
+                        if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
+                            if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
+                                add += 22 + 20 * (amount - 1) + config.getOffsetY();
                             else
-                                add += 82 + currentConfig.getOffsetY();
+                                add += 82 + config.getOffsetY();
                         }
                         else
-                            add += 22 + currentConfig.getOffsetY();
+                            add += 22 + config.getOffsetY();
                     }
                 }
             }
@@ -64,8 +63,8 @@ public class BossbarHudMixin {
      * @return Current config
      */
     @Unique
-    private ArmorHudConfig armorHud_getCurrentArmorHudConfig() {
-        return this.client.currentScreen != null && this.client.currentScreen.getTitle() == ArmorHudMod.CONFIG_SCREEN_NAME ? ArmorHudMod.previewConfig : ArmorHudMod.getCurrentConfig();
+    private ArmorHudConfig getArmorHudConfig() {
+        return this.client.currentScreen != null && this.client.currentScreen.getTitle() == ArmorHudMod.CONFIG_SCREEN_NAME ? ArmorHudMod.previewConfig : ArmorHudMod.getConfig();
     }
 
     @Unique

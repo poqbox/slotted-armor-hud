@@ -20,22 +20,22 @@ public final class ArmorHudMod {
     public static ArmorHudConfig.MutableConfig temporaryConfig;
     public static ArmorHudConfig.MutableConfig previewConfig = new ArmorHudConfig.MutableConfig();
 
-    private static ArmorHudConfig currentConfig;
+    private static ArmorHudConfig config;
 
-    public static ArmorHudConfig getCurrentConfig() {
-        return currentConfig;
+    public static ArmorHudConfig getConfig() {
+        return config;
     }
 
-    public static void setCurrentConfig(ArmorHudConfig currentConfig) {
-        ArmorHudMod.currentConfig = currentConfig;
+    public static void setConfig(ArmorHudConfig config) {
+        ArmorHudMod.config = config;
     }
 
-    public static void writeCurrentConfig() {
-        ArmorHudConfig.writeConfigFile(ArmorHudMod.getCurrentConfig());
+    public static void writeConfig() {
+        ArmorHudConfig.writeConfigFile(ArmorHudMod.getConfig());
     }
 
-    public static void readCurrentConfig() {
-        ArmorHudMod.setCurrentConfig(ArmorHudConfig.readConfigFile());
+    public static void readConfig() {
+        ArmorHudMod.setConfig(ArmorHudConfig.readConfigFile());
     }
 
     public static void log(String message) {

@@ -8,7 +8,7 @@ public final class ArmorHudModEntrypoint implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ArmorHudMod.readCurrentConfig();
+        ArmorHudMod.readConfig();
         if (FabricLoader.getInstance().isModLoaded(ArmorHudMod.FABRIC_RESOURCE_LOADER_ID)) {
             ArmorHudConfigReloader.register();
         }
