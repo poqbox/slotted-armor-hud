@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.option.AttackIndicator;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -30,19 +31,19 @@ public abstract class InGameHudMixin {
     @Shadow @Final
     private MinecraftClient client;
     @Unique
-    private static final Identifier HOTBAR_TEXTURE = new Identifier("hud/hotbar");
+    private static final Identifier HOTBAR_TEXTURE = Identifier.of("hud/hotbar");
     @Unique
-    private static final Identifier OFFHAND_TEXTURE = new Identifier("hud/hotbar_offhand_left");
+    private static final Identifier OFFHAND_TEXTURE = Identifier.of("hud/hotbar_offhand_left");
     @Unique
-    private static final Identifier EMPTY_HELMET_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_helmet");
+    private static final Identifier EMPTY_HELMET_SLOT_TEXTURE = Identifier.of("item/empty_armor_slot_helmet");
     @Unique
-    private static final Identifier EMPTY_CHESTPLATE_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_chestplate");
+    private static final Identifier EMPTY_CHESTPLATE_SLOT_TEXTURE = Identifier.of("item/empty_armor_slot_chestplate");
     @Unique
-    private static final Identifier EMPTY_LEGGINGS_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_leggings");
+    private static final Identifier EMPTY_LEGGINGS_SLOT_TEXTURE = Identifier.of("item/empty_armor_slot_leggings");
     @Unique
-    private static final Identifier EMPTY_BOOTS_SLOT_TEXTURE = new Identifier("item/empty_armor_slot_boots");
+    private static final Identifier EMPTY_BOOTS_SLOT_TEXTURE = Identifier.of("item/empty_armor_slot_boots");
     @Unique
-    private static final Identifier BLOCK_ATLAS_TEXTURE = new Identifier("textures/atlas/blocks.png");
+    private static final Identifier BLOCK_ATLAS_TEXTURE = Identifier.of("textures/atlas/blocks.png");
 
     @Unique
     private static final int slot_length = 20;
@@ -59,13 +60,13 @@ public abstract class InGameHudMixin {
     private final List<ItemStack> armorItems = new ArrayList<>(4);
 
     @Shadow
-    protected abstract void renderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed);
+    protected abstract void renderHotbarItem(DrawContext context, int x, int y, RenderTickCounter tickCounter, PlayerEntity player, ItemStack stack, int seed);
 
     @Shadow
     protected abstract PlayerEntity getCameraPlayer();
 
     @Inject(method = "renderHotbar", at = @At("TAIL"))
-    public void renderArmorHud(DrawContext context, float tickDelta, CallbackInfo ci) {
+    public void renderArmorHud(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         // add this to profiler
         this.client.getProfiler().push("armorHud");
 
@@ -191,7 +192,7 @@ public abstract class InGameHudMixin {
                     }
 
                     // draw the armour items
-                    this.drawArmorItems(config, context, x, y, tickDelta, playerEntity);
+                    this.drawArmorItems(config, context, x, y, tickCounter, playerEntity);
                     context.getMatrices().pop();
                 }
             }
@@ -355,12 +356,12 @@ public abstract class InGameHudMixin {
     }
 
     @Unique
-    private void drawArmorItems(ArmorHudConfig config, DrawContext context, int x, int y, float tickDelta, PlayerEntity playerEntity) {
+    private void drawArmorItems(ArmorHudConfig config, DrawContext context, int x, int y, RenderTickCounter tickCounter, PlayerEntity playerEntity) {
         for (int i = 0; i < armorItems.size(); i++) {
             int iReversed = config.isReversed() ? i : (armorItems.size() - i - 1);
             switch (config.getOrientation()) {
-                case Horizontal -> this.renderHotbarItem(context, x + (slot_length * iReversed) + 3, y + 3, tickDelta, playerEntity, armorItems.get(i), i + 1);
-                case Vertical -> this.renderHotbarItem(context, x + 3, y + (slot_length * iReversed) + 3, tickDelta, playerEntity, armorItems.get(i), i + 1);
+                case Horizontal -> this.renderHotbarItem(context, x + (slot_length * iReversed) + 3, y + 3, tickCounter, playerEntity, armorItems.get(i), i + 1);
+                case Vertical -> this.renderHotbarItem(context, x + 3, y + (slot_length * iReversed) + 3, tickCounter, playerEntity, armorItems.get(i), i + 1);
             }
         }
     }

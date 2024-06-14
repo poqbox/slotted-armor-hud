@@ -10,7 +10,7 @@ import ru.berdinskiybear.armorhud.ArmorHudMod;
 public class ArmorHudConfigReloader implements SimpleSynchronousResourceReloadListener {
     @Override
     public Identifier getFabricId() {
-        return new Identifier(ArmorHudMod.MOD_ID, "config_reloader");
+        return Identifier.of(ArmorHudMod.MOD_ID, "config_reloader");
     }
 
     @Override
