@@ -12,7 +12,6 @@ import ru.berdinskiybear.armorhud.config.ArmorHudConfig.*;
 import java.util.Optional;
 
 public class ArmorHudConfigScreenBuilder {
-
     public static Screen create(Screen parentScreen) {
         ArmorHudConfig defaultConfig = new ArmorHudConfig();
 
