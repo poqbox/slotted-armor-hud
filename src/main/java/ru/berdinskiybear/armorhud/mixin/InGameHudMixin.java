@@ -29,7 +29,6 @@ import java.util.Map;
 public abstract class InGameHudMixin {
     @Shadow @Final
     private MinecraftClient client;
-
     @Unique
     private static final Identifier HOTBAR_TEXTURE = new Identifier("hud/hotbar");
     @Unique
@@ -98,7 +97,6 @@ public abstract class InGameHudMixin {
                     final int sideMultiplier;
                     final int sideOffsetMultiplier;
                     final int verticalMultiplier;
-                    final int verticalOffsetMultiplier;
                     final int addedHotbarOffset;
                     final int slotNum = config.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped ? amount : 4;
                     final int longestLength = slot_borderedLength + ((slotNum - 1) * slot_length);
@@ -106,128 +104,94 @@ public abstract class InGameHudMixin {
                     context.getMatrices().push();
                     context.getMatrices().translate(0, 0, 200);
 
-                    // here I calculate the position of the widget and all sorts of multipliers based on the current config
-                    {
-                        if ((config.getAnchor() == ArmorHudConfig.Anchor.Hotbar && config.getSide() == ArmorHudConfig.Side.Left) || (config.getAnchor() != ArmorHudConfig.Anchor.Hotbar && config.getSide() == ArmorHudConfig.Side.Right)) {
-                            sideMultiplier = -1;
-                            sideOffsetMultiplier = -1;
-                        } else {
-                            sideMultiplier = 1;
-                            sideOffsetMultiplier = 0;
-                        }
-
-                        switch (config.getAnchor()) {
-                            case Top, Top_Center -> {
-                                verticalMultiplier = 1;
-                                verticalOffsetMultiplier = 0;
-                            }
-                            case Hotbar, Bottom -> {
-                                verticalMultiplier = -1;
-                                verticalOffsetMultiplier = -1;
-                            }
-                            default -> throw new IllegalStateException("Unexpected value: " + config.getAnchor());
-                        }
-
-                        switch (config.getOffhandSlotBehavior()) {
-                            case Ignore -> addedHotbarOffset = 0;
-                            case Leave_Space -> addedHotbarOffset = Math.max(offhandSlot_offset, attackIndicator_offset);
-                            case Adhere -> {
-                                if ((playerEntity.getMainArm().getOpposite() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left || playerEntity.getMainArm().getOpposite() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right) && !playerEntity.getOffHandStack().isEmpty())
-                                    addedHotbarOffset = offhandSlot_offset;
-                                else if ((playerEntity.getMainArm() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left || playerEntity.getMainArm() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right) && this.client.options.getAttackIndicator().getValue() == AttackIndicator.HOTBAR)
-                                    addedHotbarOffset = attackIndicator_offset;
-                                else
-                                    addedHotbarOffset = 0;
-                            }
-                            default -> throw new IllegalStateException("Unexpected value: " + config.getOffhandSlotBehavior());
-                        }
-
-                        int x_temp = 0;
-                        int y_temp = 0;
-                        switch (config.getOrientation()) {
-                            case Horizontal -> {
-                                x_temp = switch (config.getAnchor()) {
-                                    case Top_Center -> scaledWidth / 2 - (longestLength / 2);
-                                    case Top, Bottom -> (longestLength - scaledWidth) * sideOffsetMultiplier;
-                                    case Hotbar -> scaledWidth / 2 + ((hotbar_offset + addedHotbarOffset) * sideMultiplier) + (longestLength * sideOffsetMultiplier);
-                                };
-                                y_temp = switch (config.getAnchor()) {
-                                    case Bottom, Hotbar -> scaledHeight - slot_borderedLength;
-                                    case Top, Top_Center -> 0;
-                                };
-                            }
-                            case Vertical -> {
-                                x_temp = switch (config.getAnchor()) {
-                                    case Top_Center -> scaledWidth / 2 - (slot_borderedLength / 2);
-                                    case Top, Bottom -> (slot_borderedLength - scaledWidth) * sideOffsetMultiplier;
-                                    case Hotbar -> scaledWidth / 2 + ((hotbar_offset + addedHotbarOffset) * sideMultiplier) + (slot_borderedLength * sideOffsetMultiplier);
-                                };
-                                y_temp = switch (config.getAnchor()) {
-                                    case Bottom, Hotbar -> scaledHeight - longestLength;
-                                    case Top, Top_Center -> 0;
-                                };
-                            }
-                            default -> throw new IllegalStateException("Unexpected value: " + config.getOrientation());
-                        }
-                        if (config.getAnchor() != ArmorHudConfig.Anchor.Top_Center)
-                            x_temp += config.getOffsetX() * sideMultiplier;
-                        y_temp += config.getOffsetY() * verticalMultiplier;
-
-                        x = x_temp;
-                        y = y_temp;
+                    // calculate the position of the armor HUD and all sorts of multipliers based on the current config
+                    if ((config.getAnchor() == ArmorHudConfig.Anchor.Hotbar && config.getSide() == ArmorHudConfig.Side.Left) || (config.getAnchor() != ArmorHudConfig.Anchor.Hotbar && config.getSide() == ArmorHudConfig.Side.Right)) {
+                        sideMultiplier = -1;
+                        sideOffsetMultiplier = -1;
+                    } else {
+                        sideMultiplier = 1;
+                        sideOffsetMultiplier = 0;
                     }
+                    switch (config.getAnchor()) {
+                        case Top, Top_Center ->
+                            verticalMultiplier = 1;
+                        case Hotbar, Bottom ->
+                            verticalMultiplier = -1;
+                        default -> throw new IllegalStateException("Unexpected value: " + config.getAnchor());
+                    }
+                    switch (config.getOffhandSlotBehavior()) {
+                        case Ignore -> addedHotbarOffset = 0;
+                        case Leave_Space -> addedHotbarOffset = Math.max(offhandSlot_offset, attackIndicator_offset);
+                        case Adhere -> {
+                            if ((playerEntity.getMainArm().getOpposite() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left || playerEntity.getMainArm().getOpposite() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right) && !playerEntity.getOffHandStack().isEmpty())
+                                addedHotbarOffset = offhandSlot_offset;
+                            else if ((playerEntity.getMainArm() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left || playerEntity.getMainArm() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right) && this.client.options.getAttackIndicator().getValue() == AttackIndicator.HOTBAR)
+                                addedHotbarOffset = attackIndicator_offset;
+                            else
+                                addedHotbarOffset = 0;
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + config.getOffhandSlotBehavior());
+                    }
+                    int x_temp;
+                    int y_temp;
+                    switch (config.getOrientation()) {
+                        case Horizontal -> {
+                            x_temp = switch (config.getAnchor()) {
+                                case Top_Center -> scaledWidth / 2 - (longestLength / 2);
+                                case Top, Bottom -> (longestLength - scaledWidth) * sideOffsetMultiplier;
+                                case Hotbar -> scaledWidth / 2 + ((hotbar_offset + addedHotbarOffset) * sideMultiplier) + (longestLength * sideOffsetMultiplier);
+                            };
+                            y_temp = switch (config.getAnchor()) {
+                                case Bottom, Hotbar -> scaledHeight - slot_borderedLength;
+                                case Top, Top_Center -> 0;
+                            };
+                        }
+                        case Vertical -> {
+                            x_temp = switch (config.getAnchor()) {
+                                case Top_Center -> scaledWidth / 2 - (slot_borderedLength / 2);
+                                case Top, Bottom -> (slot_borderedLength - scaledWidth) * sideOffsetMultiplier;
+                                case Hotbar -> scaledWidth / 2 + ((hotbar_offset + addedHotbarOffset) * sideMultiplier) + (slot_borderedLength * sideOffsetMultiplier);
+                            };
+                            y_temp = switch (config.getAnchor()) {
+                                case Bottom, Hotbar -> scaledHeight - longestLength;
+                                case Top, Top_Center -> 0;
+                            };
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + config.getOrientation());
+                    }
+                    if (config.getAnchor() != ArmorHudConfig.Anchor.Top_Center)
+                        x_temp += config.getOffsetX() * sideMultiplier;
+                    y_temp += config.getOffsetY() * verticalMultiplier;
+                    x = x_temp;
+                    y = y_temp;
 
-                    // here I prepare the widget texture
+                    // prepare the texture
                     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                     RenderSystem.setShaderTexture(0, HOTBAR_TEXTURE);
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
 
-                    // here I draw the slots
-                    int[] slotData = new int[slotNum];
+                    // draw the slots
+                    int[] slotTextures = new int[slotNum];
                     for (int i = 0; i < slotNum; i++)
-                        slotData[i] = config.getSlotTextures()[i];
+                        slotTextures[i] = config.getSlotTextures()[i];
                     context.getMatrices().push();
                     context.getMatrices().translate(0, 0, -91);
-                    this.drawSlots(context, x, y, config.getOrientation(), config.getStyle(), slotData, config.getBorderLength(), config.isMatchBorderAndSlotTextures());
+                    this.drawSlots(config, context, x, y, slotTextures);
                     context.getMatrices().pop();
 
-                    // here I blend in the empty slot icons
+                    // blend in the empty slot icons
                     if (config.isEmptyIconsShown() && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped && (amount > 0 || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)) {
                         context.getMatrices().push();
                         context.getMatrices().translate(0, 0, -90);
                         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_COLOR, GlStateManager.DstFactor.ONE, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
-                        for (int i = 0; i < armorItems.size(); i++) {
-                            if (armorItems.get(i).isEmpty()) {
-                                Identifier spriteId = switch (i) {
-                                    case 0 -> EMPTY_BOOTS_SLOT_TEXTURE;
-                                    case 1 -> EMPTY_LEGGINGS_SLOT_TEXTURE;
-                                    case 2 -> EMPTY_CHESTPLATE_SLOT_TEXTURE;
-                                    case 3 -> EMPTY_HELMET_SLOT_TEXTURE;
-                                    default -> throw new IllegalStateException("Unexpected value: " + i);
-                                };
-                                Sprite sprite = this.client.getSpriteAtlas(BLOCK_ATLAS_TEXTURE).apply(spriteId);
-                                RenderSystem.setShaderTexture(0, sprite.getAtlasId());
-
-                                int iReversed = config.isReversed() ? i : (armorItems.size() - i - 1);
-                                switch (config.getOrientation()) {
-                                    case Horizontal -> context.drawSprite(x + (slot_length * iReversed) + 3, y + 3, 0, 16, 16, sprite);
-                                    case Vertical -> context.drawSprite(x + 3, y + (slot_length * iReversed) + 3, 0, 16, 16, sprite);
-                                }
-                            }
-                        }
+                        this.drawEmptySlotIcons(config, context, x, y);
                         RenderSystem.defaultBlendFunc();
                         context.getMatrices().pop();
                     }
 
-                    // here I draw the armour items
-                    for (int i = 0; i < armorItems.size(); i++) {
-                        int iReversed = config.isReversed() ? i : (armorItems.size() - i - 1);
-                        switch (config.getOrientation()) {
-                            case Horizontal -> this.renderHotbarItem(context, x + (slot_length * iReversed) + 3, y + 3, tickDelta, playerEntity, armorItems.get(i), i + 1);
-                            case Vertical -> this.renderHotbarItem(context, x + 3, y + (slot_length * iReversed) + 3, tickDelta, playerEntity, armorItems.get(i), i + 1);
-                        }
-                    }
+                    // draw the armour items
+                    this.drawArmorItems(config, context, x, y, tickDelta, playerEntity);
                     context.getMatrices().pop();
                 }
             }
@@ -236,11 +200,15 @@ public abstract class InGameHudMixin {
     }
 
     @Unique
-    private void drawSlots(DrawContext context, int x, int y, ArmorHudConfig.Orientation orientation, ArmorHudConfig.Style style, int[] slots, int borderLength, boolean matchBorderAndSlotTextures) {
-        final Map<Integer, Integer> slotTextureX = new HashMap<Integer, Integer>();
+    private void drawSlots(ArmorHudConfig config, DrawContext context, int x, int y, int[] slotTextures) {
+        final ArmorHudConfig.Orientation orientation = config.getOrientation();
+        final ArmorHudConfig.Style style = config.getStyle();
+        final int borderLength = config.getBorderLength();
+        final boolean matchBorderAndSlotTextures = config.isMatchBorderAndSlotTextures();
+        final int slotAmount = slotTextures.length;
+        final Map<Integer, Integer> slotTextureX = new HashMap<>();
         for (int i = 0; i < 9; i++)
             slotTextureX.put(i + 1, i * slot_length + 1);
-        final int slotAmount = slots.length;
 
         // calculate slot textures
         // hotbar width = 182
@@ -255,24 +223,24 @@ public abstract class InGameHudMixin {
         }
         // draw slot texture
         if (slotAmount == 1)
-            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, x + 1 + slotOffset, y + 1 + slotOffset, slotLength, slotLength);
+            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slotTextures[0]) + slotOffset, 1 + slotOffset, x + 1 + slotOffset, y + 1 + slotOffset, slotLength, slotLength);
         else {
             if (orientation == ArmorHudConfig.Orientation.Vertical) {
                 for (int i = 0; i < slotAmount; i++)
                     if (i == 0)
-                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, x + 1 + slotOffset, y + 1 + slotOffset, slotLength, edgeSlotLength);
+                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slotTextures[0]) + slotOffset, 1 + slotOffset, x + 1 + slotOffset, y + 1 + slotOffset, slotLength, edgeSlotLength);
                     else if (i == slotAmount - 1)
-                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slots[i]) + slotOffset, 1, x + 1 + slotOffset, y + 1 + i * slot_length, slotLength, edgeSlotLength);
+                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slotTextures[i]) + slotOffset, 1, x + 1 + slotOffset, y + 1 + i * slot_length, slotLength, edgeSlotLength);
                     else
-                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slots[i]) + slotOffset, 1, x + 1 + slotOffset, y + 1 + i * slot_length, slotLength, slot_length);
+                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slotTextures[i]) + slotOffset, 1, x + 1 + slotOffset, y + 1 + i * slot_length, slotLength, slot_length);
             } else {
                 for (int i = 0; i < slotAmount; i++)
                     if (i == 0)
-                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slots[0]) + slotOffset, 1 + slotOffset, x + 1 + slotOffset, y + 1 + slotOffset, edgeSlotLength, slotLength);
+                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slotTextures[0]) + slotOffset, 1 + slotOffset, x + 1 + slotOffset, y + 1 + slotOffset, edgeSlotLength, slotLength);
                     else if (i == slotAmount - 1)
-                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slots[i]), 1 + slotOffset, x + 1 + i * slot_length, y + 1 + slotOffset, edgeSlotLength, slotLength);
+                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slotTextures[i]), 1 + slotOffset, x + 1 + i * slot_length, y + 1 + slotOffset, edgeSlotLength, slotLength);
                     else
-                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slots[i]), 1 + slotOffset, x + 1 + i * slot_length, y + 1 + slotOffset, slot_length, slotLength);
+                        context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, slotTextureX.get(slotTextures[i]), 1 + slotOffset, x + 1 + i * slot_length, y + 1 + slotOffset, slot_length, slotLength);
             }
         }
 
@@ -288,7 +256,7 @@ public abstract class InGameHudMixin {
         if (borderLength > 0) {
             if (orientation == ArmorHudConfig.Orientation.Vertical) {
                 if (matchBorderAndSlotTextures)
-                    borderTextureX1 = slotTextureX.get(slots[0]) + borderLength - 1;
+                    borderTextureX1 = slotTextureX.get(slotTextures[0]) + borderLength - 1;
                 if (slotAmount == 1) {
                     // side borders
                     context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, 0, borderLength, x, y + borderLength, borderLength, slotLength);
@@ -328,20 +296,20 @@ public abstract class InGameHudMixin {
                     context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX1, 0, x + borderLength, y, slotLength, borderLength);
                     context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX1, borderTextureY2, x + borderLength, y + endPieceOffset, slotLength, borderLength);
                 } else {
-                    int borderTextureXvar = slotTextureX.get(1);
+                    int borderTextureX = slotTextureX.get(1);
                     for (int i = 0; i < slotAmount; i++) {
                         // top-bottom borders
                         if (i > 0 && matchBorderAndSlotTextures)
-                            borderTextureXvar = slotTextureX.get(slots[i]);
+                            borderTextureX = slotTextureX.get(slotTextures[i]);
                         if (i == 0) {
                             context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX1, 0, x + borderLength, y, edgePieceLength, borderLength);
                             context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX1, borderTextureY2, x + borderLength, y + endPieceOffset, edgePieceLength, borderLength);
                         } else if (i == slotAmount - 1) {
-                            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureXvar, 0, x + 1 + i * slot_length, y, edgePieceLength, borderLength);
-                            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureXvar, borderTextureY2, x + 1 + i * slot_length, y + endPieceOffset, edgePieceLength, borderLength);
+                            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX, 0, x + 1 + i * slot_length, y, edgePieceLength, borderLength);
+                            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX, borderTextureY2, x + 1 + i * slot_length, y + endPieceOffset, edgePieceLength, borderLength);
                         } else {
-                            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureXvar, 0, x + 1 + i * slot_length, y, slot_length, borderLength);
-                            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureXvar, borderTextureY2, x + 1 + i * slot_length, y + endPieceOffset, slot_length, borderLength);
+                            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX, 0, x + 1 + i * slot_length, y, slot_length, borderLength);
+                            context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX, borderTextureY2, x + 1 + i * slot_length, y + endPieceOffset, slot_length, borderLength);
                         }
                     }
                 }
@@ -359,6 +327,40 @@ public abstract class InGameHudMixin {
                     context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX2, borderTextureY1, x + endBorderOffset, y + borderLength, borderLength, slotLength);
                     context.drawGuiTexture(HOTBAR_TEXTURE, 182, 22, borderTextureX2, borderTextureY2, x + endBorderOffset, y + endPieceOffset, borderLength, borderLength);
                 }
+            }
+        }
+    }
+
+    @Unique
+    private void drawEmptySlotIcons(ArmorHudConfig config, DrawContext context, int x, int y) {
+        for (int i = 0; i < armorItems.size(); i++) {
+            if (armorItems.get(i).isEmpty()) {
+                Identifier spriteId = switch (i) {
+                    case 0 -> EMPTY_BOOTS_SLOT_TEXTURE;
+                    case 1 -> EMPTY_LEGGINGS_SLOT_TEXTURE;
+                    case 2 -> EMPTY_CHESTPLATE_SLOT_TEXTURE;
+                    case 3 -> EMPTY_HELMET_SLOT_TEXTURE;
+                    default -> throw new IllegalStateException("Unexpected value: " + i);
+                };
+                Sprite sprite = this.client.getSpriteAtlas(BLOCK_ATLAS_TEXTURE).apply(spriteId);
+                RenderSystem.setShaderTexture(0, sprite.getAtlasId());
+
+                int iReversed = config.isReversed() ? i : (armorItems.size() - i - 1);
+                switch (config.getOrientation()) {
+                    case Horizontal -> context.drawSprite(x + (slot_length * iReversed) + 3, y + 3, 0, 16, 16, sprite);
+                    case Vertical -> context.drawSprite(x + 3, y + (slot_length * iReversed) + 3, 0, 16, 16, sprite);
+                }
+            }
+        }
+    }
+
+    @Unique
+    private void drawArmorItems(ArmorHudConfig config, DrawContext context, int x, int y, float tickDelta, PlayerEntity playerEntity) {
+        for (int i = 0; i < armorItems.size(); i++) {
+            int iReversed = config.isReversed() ? i : (armorItems.size() - i - 1);
+            switch (config.getOrientation()) {
+                case Horizontal -> this.renderHotbarItem(context, x + (slot_length * iReversed) + 3, y + 3, tickDelta, playerEntity, armorItems.get(i), i + 1);
+                case Vertical -> this.renderHotbarItem(context, x + 3, y + (slot_length * iReversed) + 3, tickDelta, playerEntity, armorItems.get(i), i + 1);
             }
         }
     }

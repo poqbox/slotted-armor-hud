@@ -15,48 +15,41 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.berdinskiybear.armorhud.ArmorHudMod;
 import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
-import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(InGameHud.class)
 public class StatusEffectHudMixin {
-    @Shadow @Final private MinecraftClient client;
-
+    @Shadow @Final
+    private MinecraftClient client;
     @Unique
     private int offset = 0;
-    @Unique
-    private final List<ItemStack> armorItems = new ArrayList<>(4);
 
-    @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;", shift = At.Shift.BY, by = 2))
+    @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;shouldShowIcon()Z", shift = At.Shift.AFTER))
     public void calculateOffset(DrawContext context, float tickDelta, CallbackInfo ci) {
         ArmorHudConfig config = this.getArmorHudConfig();
-        if (config.isEnabled() && config.isPushStatusEffectIcons()) {
+        if (config.isEnabled() && config.isPushStatusEffectIcons() && config.getAnchor() == ArmorHudConfig.Anchor.Top && config.getSide() == ArmorHudConfig.Side.Right) {
             int add = 0;
-            if (config.getAnchor() == ArmorHudConfig.Anchor.Top && config.getSide() == ArmorHudConfig.Side.Right) {
-                int amount = 0;
-                PlayerEntity playerEntity = this.getCameraPlayer();
-                if (playerEntity != null) {
-                    this.armorItems.clear();
-                    if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)
-                        amount = 4;
-                    else {
-                        List<ItemStack> armorList = playerEntity.getInventory().armor;
-                        for (ItemStack itemStack : armorList) {
-                            if (!itemStack.isEmpty()) {
-                                amount++;
-                                if (config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped) {
-                                    amount = 4;
-                                    break;
-                                }
+            int amount = 0;
+            PlayerEntity playerEntity = this.getCameraPlayer();
+            if (playerEntity != null) {
+                if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)
+                    amount = 4;
+                else {
+                    List<ItemStack> armorList = playerEntity.getInventory().armor;
+                    for (ItemStack itemStack : armorList) {
+                        if (!itemStack.isEmpty()) {
+                            amount++;
+                            if (config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped) {
+                                amount = 4;
+                                break;
                             }
                         }
                     }
-
-                    if (amount != 0)
-                        add += 22 + config.getOffsetY();
-                    if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
-                        add += 20 * (amount - 1);
                 }
+                if (amount != 0)
+                    add += 22 + config.getOffsetY();
+                if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
+                    add += 20 * (amount - 1);
             }
             this.offset = Math.max(add, 0);
         } else
