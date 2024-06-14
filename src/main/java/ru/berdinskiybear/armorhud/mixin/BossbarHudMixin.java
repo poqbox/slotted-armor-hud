@@ -41,7 +41,7 @@ public class BossbarHudMixin {
                     }
                 }
                 if (amount != 0)
-                    add += 22 + config.getOffsetY();
+                    add += 22 + config.getOffsetY() + config.getBossbarSpacing();
                 if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
                     add += 20 * (amount - 1);
             }

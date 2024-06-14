@@ -24,6 +24,8 @@
   "armorHud.configScreen.setting.slotTexture4.name": "Slot 4 texture",
   "armorHud.configScreen.setting.borderLength.name": "Border length",
   "armorHud.configScreen.setting.matchBorderAndSlotTextures.name": "Match border and slot textures",
+  "armorHud.configScreen.setting.bossbarSpacing.name": "Bossbar spacing",
+  "armorHud.configScreen.setting.statusEffectIconSpacing.name": "Effect icon spacing",
   "armorHud.configScreen.setting.minOffsetBeforePushingChatBox.name": "Min offset before pushing chat box",
   "armorHud.configScreen.setting.minOffsetBeforePushingSubtitles.name": "Min offset before pushing subtitles",
   "armorHud.configScreen.setting.style.name": "Style",
@@ -48,6 +50,8 @@
   "armorHud.configScreen.setting.slotTexture4.description": "The texture of the selected hotbar slot \nwill be used for slot 4.",
   "armorHud.configScreen.setting.borderLength.description": "Borders and slot backgrounds are drawn \nseparately. This option defines how much \nof the border is drawn.",
   "armorHud.configScreen.setting.matchBorderAndSlotTextures.description": "Matches the border texture to the \ntexture of the selected hotbar slot\n(configured above).\n If turned off, the border will use \n [Slot Texture 1] for all borders.",
+  "armorHud.configScreen.setting.bossbarSpacing.description": "Spacing between the armor HUD and \nbossbars.",
+  "armorHud.configScreen.setting.statusEffectIconSpacing.description": "Spacing between the armor HUD and \nstatus effect icons.",
   "armorHud.configScreen.setting.minOffsetBeforePushingChatBox.description": "The minimum Y offset required before \nthe chat box is pushed.",
   "armorHud.configScreen.setting.minOffsetBeforePushingSubtitles.description": "The minimum Y offset required before \nsubtitles are pushed.",
   "armorHud.configScreen.setting.style.description": "Defines how the armor HUD border is drawn.\nResource packs work best with 'Squared'.\n Squared\n Rounded"

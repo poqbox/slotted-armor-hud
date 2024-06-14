@@ -11,7 +11,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ArmorHudConfig {
-
     protected boolean enabled;
     protected Anchor anchor;
     protected Side side;
@@ -30,37 +29,33 @@ public class ArmorHudConfig {
     protected int[] slotTextures;
     protected int borderLength;
     protected boolean matchBorderAndSlotTextures;
+    protected int bossbarSpacing;
+    protected int statusEffectIconSpacing;
     protected int minOffsetBeforePushingChatBox;
     protected int minOffsetBeforePushingSubtitles;
-
     public enum Anchor {
         Hotbar,
         Bottom,
         Top,
         Top_Center
     }
-
     public enum Side {
         Left,
         Right
     }
-
     public enum Orientation {
         Horizontal,
         Vertical
     }
-
     public enum OffhandSlotBehavior {
         Leave_Space,
         Adhere,
         Ignore
     }
-
     public enum Style {
         Squared,
         Rounded
     }
-
     public enum SlotsShown {
         Show_Equipped,
         Show_All,
@@ -69,7 +64,7 @@ public class ArmorHudConfig {
 
     public ArmorHudConfig() {
         this.enabled = true;
-        this.anchor = Anchor.Hotbar;
+        this.anchor = Anchor.Bottom;
         this.side = Side.Left;
         this.orientation = Orientation.Horizontal;
         this.offhandSlotBehavior = OffhandSlotBehavior.Leave_Space;
@@ -84,8 +79,10 @@ public class ArmorHudConfig {
         this.pushStatusEffectIcons = true;
         this.pushSubtitles = true;
         this.slotTextures = new int[]{1, 2, 3, 4};
-        this.borderLength = 3;
+        this.borderLength = 1;
         this.matchBorderAndSlotTextures = true;
+        this.bossbarSpacing = 0;
+        this.statusEffectIconSpacing = 0;
         this.minOffsetBeforePushingChatBox = 0;
         this.minOffsetBeforePushingSubtitles = 0;
     }
@@ -109,6 +106,8 @@ public class ArmorHudConfig {
         this.slotTextures = original.slotTextures;
         this.borderLength = original.borderLength;
         this.minOffsetBeforePushingChatBox = original.minOffsetBeforePushingChatBox;
+        this.bossbarSpacing = original.bossbarSpacing;
+        this.statusEffectIconSpacing = original.statusEffectIconSpacing;
         this.matchBorderAndSlotTextures = original.matchBorderAndSlotTextures;
         this.minOffsetBeforePushingSubtitles = original.minOffsetBeforePushingSubtitles;
     }
@@ -223,6 +222,14 @@ public class ArmorHudConfig {
         return matchBorderAndSlotTextures;
     }
 
+    public int getBossbarSpacing() {
+        return bossbarSpacing;
+    }
+
+    public int getStatusEffectIconSpacing() {
+        return statusEffectIconSpacing;
+    }
+
     public int getMinOffsetBeforePushingChatBox() {
         return minOffsetBeforePushingChatBox;
     }
@@ -232,7 +239,6 @@ public class ArmorHudConfig {
     }
 
     public static class MutableConfig extends ArmorHudConfig {
-
         public MutableConfig() {
             super();
         }
@@ -323,6 +329,14 @@ public class ArmorHudConfig {
 
         public void setMatchBorderAndSlotTextures(boolean matchBorderAndSlotTextures) {
             this.matchBorderAndSlotTextures = matchBorderAndSlotTextures;
+        }
+
+        public void setBossbarSpacing(int bossbarSpacing) {
+            this.bossbarSpacing = bossbarSpacing;
+        }
+
+        public void setStatusEffectIconSpacing(int statusEffectIconSpacing) {
+            this.statusEffectIconSpacing = statusEffectIconSpacing;
         }
 
         public void setMinOffsetBeforePushingChatBox(int minOffsetBeforePushingChatBox) {

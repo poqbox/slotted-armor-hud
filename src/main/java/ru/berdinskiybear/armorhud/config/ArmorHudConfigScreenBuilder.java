@@ -62,6 +62,8 @@ public class ArmorHudConfigScreenBuilder {
         AbstractConfigListEntry<Integer> slotTexture4Entry;
         AbstractConfigListEntry<Integer> borderLengthEntry;
         AbstractConfigListEntry<Boolean> matchBorderAndSlotTexturesEntry;
+        AbstractConfigListEntry<Integer> bossbarSpacing;
+        AbstractConfigListEntry<Integer> statusEffectIconSpacing;
         AbstractConfigListEntry<Integer> minOffsetBeforePushingChatBoxEntry;
         AbstractConfigListEntry<Integer> minOffsetBeforePushingSubtitlesEntry;
 
@@ -316,6 +318,30 @@ public class ArmorHudConfigScreenBuilder {
                 })
                 .build();
         advancedCategory.addEntry(matchBorderAndSlotTexturesEntry);
+
+        bossbarSpacing = configEntryBuilder
+                .startIntField(Text.translatable("armorHud.configScreen.setting.bossbarSpacing.name"), ArmorHudMod.getConfig().getBossbarSpacing())
+                .setDefaultValue(defaultConfig.getBossbarSpacing())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.bossbarSpacing.description"))
+                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setBossbarSpacing(value))
+                .setErrorSupplier((Integer value) -> {
+                    ArmorHudMod.previewConfig.setBossbarSpacing(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(bossbarSpacing);
+
+        statusEffectIconSpacing = configEntryBuilder
+                .startIntField(Text.translatable("armorHud.configScreen.setting.statusEffectIconSpacing.name"), ArmorHudMod.getConfig().getStatusEffectIconSpacing())
+                .setDefaultValue(defaultConfig.getStatusEffectIconSpacing())
+                .setTooltip(Text.translatable("armorHud.configScreen.setting.statusEffectIconSpacing.description"))
+                .setSaveConsumer((Integer value) -> ArmorHudMod.temporaryConfig.setStatusEffectIconSpacing(value))
+                .setErrorSupplier((Integer value) -> {
+                    ArmorHudMod.previewConfig.setStatusEffectIconSpacing(value);
+                    return Optional.empty();
+                })
+                .build();
+        advancedCategory.addEntry(statusEffectIconSpacing);
 
         minOffsetBeforePushingChatBoxEntry = configEntryBuilder
                 .startIntField(Text.translatable("armorHud.configScreen.setting.minOffsetBeforePushingChatBox.name"), ArmorHudMod.getConfig().getMinOffsetBeforePushingChatBox())
