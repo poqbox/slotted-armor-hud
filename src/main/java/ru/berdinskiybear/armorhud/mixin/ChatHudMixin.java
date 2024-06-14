@@ -23,7 +23,7 @@ public class ChatHudMixin {
     @Unique
     private int offset = 0;
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getProfiler()Lnet/minecraft/util/profiler/Profiler;", shift = At.Shift.AFTER))
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;getMatrices()Lnet/minecraft/client/util/math/MatrixStack;", ordinal = 0, shift = At.Shift.AFTER))
     public void calculateOffset(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         ArmorHudConfig config = this.getArmorHudConfig();
         if (config.isEnabled() && config.isPushChatBox() && config.getAnchor() == ArmorHudConfig.Anchor.Bottom && config.getSide() == ArmorHudConfig.Side.Left && config.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
