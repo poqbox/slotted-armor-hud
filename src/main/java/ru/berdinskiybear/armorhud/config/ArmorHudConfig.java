@@ -117,7 +117,8 @@ public class ArmorHudConfig {
         File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), ArmorHudMod.MOD_ID + ".json");
         if (configFile.exists()) {
             try (FileReader fileReader = new FileReader(configFile)) {
-                return gson.fromJson(fileReader, ArmorHudConfig.class);
+                ArmorHudConfig config = gson.fromJson(fileReader, ArmorHudConfig.class);
+                return replaceNullAttributes(config);
             } catch (IOException e) {
                 ArmorHudMod.log(Level.ERROR, "Config file " + configFile.getAbsolutePath() + " can't be read or has disappeared.");
                 ArmorHudMod.log(Level.ERROR, e.getLocalizedMessage());
@@ -144,6 +145,39 @@ public class ArmorHudConfig {
         ArmorHudConfig config = new ArmorHudConfig();
         writeConfigFile(config);
         return config;
+    }
+
+    private static ArmorHudConfig replaceNullAttributes(ArmorHudConfig config) {
+        boolean containsNull = false;
+        ArmorHudConfig.MutableConfig temporaryConfig = new ArmorHudConfig.MutableConfig(config);
+        ArmorHudConfig defaultConfig = new ArmorHudConfig();
+        if (temporaryConfig.getAnchor() == null) {
+            temporaryConfig.setAnchor(defaultConfig.getAnchor());
+            containsNull = true;
+        }
+        if (temporaryConfig.getSide() == null) {
+            temporaryConfig.setSide(defaultConfig.getSide());
+            containsNull = true;
+        }
+        if (temporaryConfig.getOrientation() == null) {
+            temporaryConfig.setOrientation(defaultConfig.getOrientation());
+            containsNull = true;
+        }
+        if (temporaryConfig.getOffhandSlotBehavior() == null) {
+            temporaryConfig.setOffhandSlotBehavior(defaultConfig.getOffhandSlotBehavior());
+            containsNull = true;
+        }
+        if (temporaryConfig.getStyle() == null) {
+            temporaryConfig.setStyle(defaultConfig.getStyle());
+            containsNull = true;
+        }
+        if (temporaryConfig.getSlotsShown() == null) {
+            temporaryConfig.setSlotsShown(defaultConfig.getSlotsShown());
+            containsNull = true;
+        }
+        if (containsNull)
+            writeConfigFile(temporaryConfig);
+        return new ArmorHudConfig(temporaryConfig);
     }
 
     public boolean isPreview() {
