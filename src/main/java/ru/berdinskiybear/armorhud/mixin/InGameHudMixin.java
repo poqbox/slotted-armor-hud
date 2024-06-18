@@ -78,10 +78,16 @@ public abstract class InGameHudMixin {
 
                 // count the items and save the ones that need to be drawn
                 armorHudItems.addAll(playerEntity.getInventory().armor);
+                boolean hasArmor = false;
                 for (int i = 0; i < armorHudItems.size(); i++) {
-                    if (armorHudItems.get(i).isEmpty() && config.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
+                    ItemStack armorSlot = armorHudItems.get(i);
+                    if (!armorSlot.isEmpty())
+                        hasArmor = true;
+                    else if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
                         armorHudItems.remove(i--);
                 }
+                if (!hasArmor && config.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_All)
+                    armorHudItems.clear();
 
                 // if true, then prepare and draw
                 if (!armorHudItems.isEmpty() || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show) {
