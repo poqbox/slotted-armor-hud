@@ -69,8 +69,6 @@ public abstract class InGameHudMixin {
     public void renderArmorHud(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         // add this to profiler
         this.client.getProfiler().push("armorHud");
-
-        // get current config
         ArmorHudConfig config = this.getArmorHudConfig();
 
         // switch to enable the mod
@@ -89,31 +87,31 @@ public abstract class InGameHudMixin {
                 if (!armorHudItems.isEmpty() || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show) {
                     final int scaledWidth = context.getScaledWindowWidth();
                     final int scaledHeight = context.getScaledWindowHeight();
-                    final int y;
-                    final int x;
                     final int armorHudLength = slot_borderedLength + ((armorHudItems.size() - 1) * slot_length);
+                    final int verticalMultiplier;
                     final int sideMultiplier;
                     final int sideOffsetMultiplier;
-                    final int verticalMultiplier;
                     final int addedHotbarOffset;
+                    final int y;
+                    final int x;
 
                     context.getMatrices().push();
                     context.getMatrices().translate(0, 0, 200);
 
-                    // calculate the position of the armor HUD and all sorts of multipliers based on the current config
+                    // calculate the position of the armor HUD based on the config
+                    switch (config.getAnchor()) {
+                        case Hotbar, Bottom ->
+                                verticalMultiplier = -1;
+                        case Top, Top_Center ->
+                                verticalMultiplier = 1;
+                        default -> throw new IllegalStateException("Unexpected value: " + config.getAnchor());
+                    }
                     if ((config.getAnchor() == ArmorHudConfig.Anchor.Hotbar && config.getSide() == ArmorHudConfig.Side.Left) || (config.getAnchor() != ArmorHudConfig.Anchor.Hotbar && config.getSide() == ArmorHudConfig.Side.Right)) {
                         sideMultiplier = -1;
                         sideOffsetMultiplier = -1;
                     } else {
                         sideMultiplier = 1;
                         sideOffsetMultiplier = 0;
-                    }
-                    switch (config.getAnchor()) {
-                        case Top, Top_Center ->
-                            verticalMultiplier = 1;
-                        case Hotbar, Bottom ->
-                            verticalMultiplier = -1;
-                        default -> throw new IllegalStateException("Unexpected value: " + config.getAnchor());
                     }
                     switch (config.getOffhandSlotBehavior()) {
                         case Leave_Space -> addedHotbarOffset = Math.max(offhandSlot_offset, attackIndicator_offset);
