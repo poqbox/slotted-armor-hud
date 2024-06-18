@@ -63,10 +63,10 @@ public class StatusEffectHudMixin {
     }
 
     /**
-     * This function determines which config is supposed to be current. Usually the loaded config is considered current
-     * but if config screen is open then the preview config is used as current.
+     * Determines which config to use.
+     * If the config screen is open, the preview config is returned. Otherwise, the loaded config is returned.
      *
-     * @return Current config
+     * @return config
      */
     @Unique
     private ArmorHudConfig getArmorHudConfig() {
