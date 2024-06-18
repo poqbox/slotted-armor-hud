@@ -339,10 +339,10 @@ public abstract class InGameHudMixin {
                 Sprite sprite = this.client.getSpriteAtlas(BLOCK_ATLAS_TEXTURE).apply(spriteId);
                 RenderSystem.setShaderTexture(0, sprite.getAtlasId());
 
-                int iReversed = config.isReversed() ? i : (armorHudItems.size() - i - 1);
+                int slotOffset = config.isReversed() ? i * slot_length : (armorHudItems.size() - i - 1) * slot_length;
                 switch (config.getOrientation()) {
-                    case Horizontal -> context.drawSprite(x + (slot_length * iReversed) + 3, y + 3, 0, 16, 16, sprite);
-                    case Vertical -> context.drawSprite(x + 3, y + (slot_length * iReversed) + 3, 0, 16, 16, sprite);
+                    case Horizontal -> context.drawSprite(x + 3 + slotOffset, y + 3, 0, 16, 16, sprite);
+                    case Vertical -> context.drawSprite(x + 3, y + 3 + slotOffset, 0, 16, 16, sprite);
                 }
             }
         }
@@ -351,10 +351,10 @@ public abstract class InGameHudMixin {
     @Unique
     private void drawArmorItems(ArmorHudConfig config, DrawContext context, int x, int y, RenderTickCounter tickCounter, PlayerEntity playerEntity) {
         for (int i = 0; i < armorHudItems.size(); i++) {
-            int iReversed = config.isReversed() ? i : (armorHudItems.size() - i - 1);
+            int slotOffset = config.isReversed() ? i * slot_length : (armorHudItems.size() - i - 1) * slot_length;
             switch (config.getOrientation()) {
-                case Horizontal -> this.renderHotbarItem(context, x + (slot_length * iReversed) + 3, y + 3, tickCounter, playerEntity, armorHudItems.get(i), i + 1);
-                case Vertical -> this.renderHotbarItem(context, x + 3, y + (slot_length * iReversed) + 3, tickCounter, playerEntity, armorHudItems.get(i), i + 1);
+                case Horizontal -> this.renderHotbarItem(context, x + 3 + slotOffset, y + 3, tickCounter, playerEntity, armorHudItems.get(i), i + 1);
+                case Vertical -> this.renderHotbarItem(context, x + 3, y + 3 + slotOffset, tickCounter, playerEntity, armorHudItems.get(i), i + 1);
             }
         }
     }
