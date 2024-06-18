@@ -79,7 +79,6 @@ public abstract class InGameHudMixin {
             if (playerEntity != null) {
 
                 // count the items and save the ones that need to be drawn
-                armorHudItems.clear();
                 armorHudItems.addAll(playerEntity.getInventory().armor);
                 for (int i = 0; i < armorHudItems.size(); i++) {
                     if (armorHudItems.get(i).isEmpty() && config.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
@@ -191,6 +190,7 @@ public abstract class InGameHudMixin {
                     this.drawArmorItems(config, context, x, y, tickCounter, playerEntity);
                     context.getMatrices().pop();
                 }
+                armorHudItems.clear();
             }
         }
         this.client.getProfiler().pop();
