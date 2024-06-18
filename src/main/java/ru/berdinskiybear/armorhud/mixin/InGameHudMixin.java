@@ -91,8 +91,8 @@ public abstract class InGameHudMixin {
 
                 // if true, then prepare and draw
                 if (amount > 0 || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show) {
-                    final int scaledWidth = this.client.getWindow().getScaledWidth();
-                    final int scaledHeight = this.client.getWindow().getScaledHeight();
+                    final int scaledWidth = context.getScaledWindowWidth();
+                    final int scaledHeight = context.getScaledWindowHeight();
                     final int y;
                     final int x;
                     final int sideMultiplier;
@@ -367,10 +367,10 @@ public abstract class InGameHudMixin {
     }
 
     /**
-     * This function determines which config is supposed to be current. Usually the loaded config is considered current
-     * but if config screen is open then the preview config is used as current.
+     * Determines which config to use.
+     * If the config screen is open, the preview config is returned. Otherwise, the loaded config is returned.
      *
-     * @return Current config
+     * @return config
      */
     @Unique
     private ArmorHudConfig getArmorHudConfig() {
