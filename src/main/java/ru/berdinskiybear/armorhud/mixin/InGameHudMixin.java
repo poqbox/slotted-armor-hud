@@ -116,16 +116,16 @@ public abstract class InGameHudMixin {
                         default -> throw new IllegalStateException("Unexpected value: " + config.getAnchor());
                     }
                     switch (config.getOffhandSlotBehavior()) {
-                        case Ignore -> addedHotbarOffset = 0;
                         case Leave_Space -> addedHotbarOffset = Math.max(offhandSlot_offset, attackIndicator_offset);
                         case Adhere -> {
-                            if ((playerEntity.getMainArm().getOpposite() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left || playerEntity.getMainArm().getOpposite() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right) && !playerEntity.getOffHandStack().isEmpty())
+                            if ((playerEntity.getMainArm() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Left || playerEntity.getMainArm() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Right) && !playerEntity.getOffHandStack().isEmpty())
                                 addedHotbarOffset = offhandSlot_offset;
-                            else if ((playerEntity.getMainArm() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left || playerEntity.getMainArm() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right) && this.client.options.getAttackIndicator().getValue() == AttackIndicator.HOTBAR)
+                            else if ((playerEntity.getMainArm() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right || playerEntity.getMainArm() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left) && this.client.options.getAttackIndicator().getValue() == AttackIndicator.HOTBAR)
                                 addedHotbarOffset = attackIndicator_offset;
                             else
                                 addedHotbarOffset = 0;
                         }
+                        case Ignore -> addedHotbarOffset = 0;
                         default -> throw new IllegalStateException("Unexpected value: " + config.getOffhandSlotBehavior());
                     }
                     int x_temp;
