@@ -18,6 +18,7 @@ import java.util.List;
 public class BossbarHudMixin {
     @Shadow @Final
     private MinecraftClient client;
+
     @ModifyVariable(method = "render", at = @At(value = "STORE", ordinal = 0), ordinal = 1)
     public int calculateOffset(int offset) {
         ArmorHudConfig config = this.getArmorHudConfig();
