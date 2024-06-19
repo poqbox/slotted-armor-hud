@@ -102,7 +102,7 @@ public abstract class InGameHudMixin {
                     final int x;
 
                     context.getMatrices().push();
-                    context.getMatrices().translate(0, 0, 200);
+                    context.getMatrices().translate(0, 0, 0);
 
                     // calculate the position of the armor HUD based on the config
                     switch (config.getAnchor()) {
@@ -191,8 +191,11 @@ public abstract class InGameHudMixin {
                     }
 
                     // draw the armour items
+                    context.getMatrices().push();
+                    context.getMatrices().translate(0, 0, -1);
                     this.drawArmorItems(config, context, x, y, tickCounter, playerEntity);
                     context.getMatrices().pop();
+                    RenderSystem.disableBlend();
                 }
                 armorHudItems.clear();
             }
