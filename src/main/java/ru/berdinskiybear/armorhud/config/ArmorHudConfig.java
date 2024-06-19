@@ -11,10 +11,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ArmorHudConfig {
-
     protected boolean enabled;
-    protected Side side;
     protected Anchor anchor;
+    protected Side side;
     protected Orientation orientation;
     protected OffhandSlotBehavior offhandSlotBehavior;
     protected int offsetX;
@@ -24,79 +23,75 @@ public class ArmorHudConfig {
     protected boolean emptyIconsShown;
     protected boolean reversed;
     protected boolean pushBossbars;
+    protected boolean pushChatBox;
     protected boolean pushStatusEffectIcons;
     protected boolean pushSubtitles;
-    protected boolean warningShown;
-    protected int minDurabilityValue;
-    protected double minDurabilityPercentage;
-    protected float warningIconBobbingIntervalMs;
     protected int[] slotTextures;
     protected int borderLength;
     protected boolean matchBorderAndSlotTextures;
-
-    public enum Orientation {
-        Horizontal,
-        Vertical
-    }
-
+    protected int bossbarSpacing;
+    protected int statusEffectIconSpacing;
+    protected int minOffsetBeforePushingChatBox;
+    protected int minOffsetBeforePushingSubtitles;
     public enum Anchor {
-        Bottom,
         Hotbar,
+        Bottom,
         Top,
         Top_Center
     }
-
     public enum Side {
         Left,
         Right
     }
-
+    public enum Orientation {
+        Horizontal,
+        Vertical
+    }
     public enum OffhandSlotBehavior {
         Leave_Space,
         Adhere,
         Ignore
     }
-
     public enum Style {
         Squared,
         Rounded
     }
-
     public enum SlotsShown {
-        Always,
-        All,
-        Equipped
+        Show_Equipped,
+        Show_All,
+        Always_Show
     }
 
     public ArmorHudConfig() {
         this.enabled = true;
-        this.orientation = Orientation.Horizontal;
-        this.anchor = Anchor.Hotbar;
+        this.anchor = Anchor.Bottom;
         this.side = Side.Left;
+        this.orientation = Orientation.Horizontal;
         this.offhandSlotBehavior = OffhandSlotBehavior.Leave_Space;
         this.offsetX = 0;
         this.offsetY = 0;
         this.style = Style.Squared;
-        this.slotsShown = SlotsShown.Equipped;
+        this.slotsShown = SlotsShown.Show_Equipped;
         this.emptyIconsShown = true;
         this.reversed = false;
         this.pushBossbars = true;
+        this.pushChatBox = true;
         this.pushStatusEffectIcons = true;
         this.pushSubtitles = true;
-        this.warningShown = false;
-        this.minDurabilityValue = 10;
-        this.minDurabilityPercentage = 0.115D;
-        this.warningIconBobbingIntervalMs = 2000.0F;
-        this.slotTextures = new int[]{1, 1, 1, 1};
-        this.borderLength = 3;
-        this.matchBorderAndSlotTextures = false;
+        this.slotTextures = new int[]{1, 2, 3, 4};
+        this.borderLength = 1;
+        this.matchBorderAndSlotTextures = true;
+        this.bossbarSpacing = 0;
+        this.statusEffectIconSpacing = 0;
+        this.minOffsetBeforePushingChatBox = 0;
+        this.minOffsetBeforePushingSubtitles = 0;
     }
 
     public ArmorHudConfig(ArmorHudConfig original) {
         this.enabled = original.enabled;
-        this.orientation = original.orientation;
         this.anchor = original.anchor;
         this.side = original.side;
+        this.orientation = original.orientation;
         this.offhandSlotBehavior = original.offhandSlotBehavior;
         this.offsetX = original.offsetX;
         this.offsetY = original.offsetY;
@@ -105,15 +100,16 @@ public class ArmorHudConfig {
         this.emptyIconsShown = original.emptyIconsShown;
         this.reversed = original.reversed;
         this.pushBossbars = original.pushBossbars;
+        this.pushChatBox = original.pushChatBox;
         this.pushStatusEffectIcons = original.pushStatusEffectIcons;
         this.pushSubtitles = original.pushSubtitles;
-        this.warningShown = original.warningShown;
-        this.minDurabilityValue = original.minDurabilityValue;
-        this.minDurabilityPercentage = original.minDurabilityPercentage;
-        this.warningIconBobbingIntervalMs = original.warningIconBobbingIntervalMs;
         this.slotTextures = original.slotTextures;
         this.borderLength = original.borderLength;
+        this.bossbarSpacing = original.bossbarSpacing;
+        this.statusEffectIconSpacing = original.statusEffectIconSpacing;
         this.matchBorderAndSlotTextures = original.matchBorderAndSlotTextures;
+        this.minOffsetBeforePushingChatBox = original.minOffsetBeforePushingChatBox;
+        this.minOffsetBeforePushingSubtitles = original.minOffsetBeforePushingSubtitles;
     }
 
     public static ArmorHudConfig readConfigFile() {
@@ -121,7 +117,8 @@ public class ArmorHudConfig {
         File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), ArmorHudMod.MOD_ID + ".json");
         if (configFile.exists()) {
             try (FileReader fileReader = new FileReader(configFile)) {
-                return gson.fromJson(fileReader, ArmorHudConfig.class);
+                ArmorHudConfig config = gson.fromJson(fileReader, ArmorHudConfig.class);
+                return replaceNullAttributes(config);
             } catch (IOException e) {
                 ArmorHudMod.log(Level.ERROR, "Config file " + configFile.getAbsolutePath() + " can't be read or has disappeared.");
                 ArmorHudMod.log(Level.ERROR, e.getLocalizedMessage());
@@ -150,6 +147,39 @@ public class ArmorHudConfig {
         return config;
     }
 
+    private static ArmorHudConfig replaceNullAttributes(ArmorHudConfig config) {
+        boolean containsNull = false;
+        ArmorHudConfig.MutableConfig temporaryConfig = new ArmorHudConfig.MutableConfig(config);
+        ArmorHudConfig defaultConfig = new ArmorHudConfig();
+        if (temporaryConfig.getAnchor() == null) {
+            temporaryConfig.setAnchor(defaultConfig.getAnchor());
+            containsNull = true;
+        }
+        if (temporaryConfig.getSide() == null) {
+            temporaryConfig.setSide(defaultConfig.getSide());
+            containsNull = true;
+        }
+        if (temporaryConfig.getOrientation() == null) {
+            temporaryConfig.setOrientation(defaultConfig.getOrientation());
+            containsNull = true;
+        }
+        if (temporaryConfig.getOffhandSlotBehavior() == null) {
+            temporaryConfig.setOffhandSlotBehavior(defaultConfig.getOffhandSlotBehavior());
+            containsNull = true;
+        }
+        if (temporaryConfig.getStyle() == null) {
+            temporaryConfig.setStyle(defaultConfig.getStyle());
+            containsNull = true;
+        }
+        if (temporaryConfig.getSlotsShown() == null) {
+            temporaryConfig.setSlotsShown(defaultConfig.getSlotsShown());
+            containsNull = true;
+        }
+        if (containsNull)
+            writeConfigFile(temporaryConfig);
+        return new ArmorHudConfig(temporaryConfig);
+    }
+
     public boolean isPreview() {
         return false;
     }
@@ -158,16 +188,16 @@ public class ArmorHudConfig {
         return enabled;
     }
 
-    public Orientation getOrientation() {
-        return orientation;
-    }
-
     public Anchor getAnchor() {
         return anchor;
     }
 
     public Side getSide() {
         return side;
+    }
+
+    public Orientation getOrientation() {
+        return orientation;
     }
 
     public OffhandSlotBehavior getOffhandSlotBehavior() {
@@ -202,28 +232,16 @@ public class ArmorHudConfig {
         return this.pushBossbars;
     }
 
+    public boolean isPushChatBox() {
+        return this.pushChatBox;
+    }
+
     public boolean isPushStatusEffectIcons() {
         return this.pushStatusEffectIcons;
     }
 
     public boolean isPushSubtitles() {
         return this.pushSubtitles;
-    }
-
-    public boolean isWarningShown() {
-        return warningShown;
-    }
-
-    public int getMinDurabilityValue() {
-        return minDurabilityValue;
-    }
-
-    public double getMinDurabilityPercentage() {
-        return minDurabilityPercentage;
-    }
-
-    public float getWarningIconBobbingIntervalMs() {
-        return warningIconBobbingIntervalMs;
     }
 
     public int[] getSlotTextures() {
@@ -238,8 +256,23 @@ public class ArmorHudConfig {
         return matchBorderAndSlotTextures;
     }
 
-    public static class MutableConfig extends ArmorHudConfig {
+    public int getBossbarSpacing() {
+        return bossbarSpacing;
+    }
 
+    public int getStatusEffectIconSpacing() {
+        return statusEffectIconSpacing;
+    }
+
+    public int getMinOffsetBeforePushingChatBox() {
+        return minOffsetBeforePushingChatBox;
+    }
+
+    public int getMinOffsetBeforePushingSubtitles() {
+        return minOffsetBeforePushingSubtitles;
+    }
+
+    public static class MutableConfig extends ArmorHudConfig {
         public MutableConfig() {
             super();
         }
@@ -252,16 +285,16 @@ public class ArmorHudConfig {
             this.enabled = enabled;
         }
 
-        public void setOrientation(Orientation orientation) {
-            this.orientation = orientation;
-        }
-
         public void setAnchor(Anchor anchor) {
             this.anchor = anchor;
         }
 
         public void setSide(Side side) {
             this.side = side;
+        }
+
+        public void setOrientation(Orientation orientation) {
+            this.orientation = orientation;
         }
 
         public void setOffhandSlotBehavior(OffhandSlotBehavior offhandSlotBehavior) {
@@ -296,28 +329,16 @@ public class ArmorHudConfig {
             this.pushBossbars = pushBossbars;
         }
 
+        public void setPushChatBox(boolean pushChatBox) {
+            this.pushChatBox = pushChatBox;
+        }
+
         public void setPushStatusEffectIcons(boolean pushStatusEffectIcons) {
             this.pushStatusEffectIcons = pushStatusEffectIcons;
         }
 
         public void setPushSubtitles(boolean pushSubtitles) {
             this.pushSubtitles = pushSubtitles;
-        }
-
-        public void setWarningShown(boolean warningShown) {
-            this.warningShown = warningShown;
-        }
-
-        public void setMinDurabilityValue(int minDurabilityValue) {
-            this.minDurabilityValue = minDurabilityValue;
-        }
-
-        public void setMinDurabilityPercentage(double minDurabilityPercentage) {
-            this.minDurabilityPercentage = minDurabilityPercentage;
-        }
-
-        public void setWarningIconBobbingIntervalMs(float warningIconBobbingIntervalMs) {
-            this.warningIconBobbingIntervalMs = warningIconBobbingIntervalMs;
         }
 
         public void setSlotTexture1(int slot) {
@@ -342,6 +363,22 @@ public class ArmorHudConfig {
 
         public void setMatchBorderAndSlotTextures(boolean matchBorderAndSlotTextures) {
             this.matchBorderAndSlotTextures = matchBorderAndSlotTextures;
+        }
+
+        public void setBossbarSpacing(int bossbarSpacing) {
+            this.bossbarSpacing = bossbarSpacing;
+        }
+
+        public void setStatusEffectIconSpacing(int statusEffectIconSpacing) {
+            this.statusEffectIconSpacing = statusEffectIconSpacing;
+        }
+
+        public void setMinOffsetBeforePushingChatBox(int minOffsetBeforePushingChatBox) {
+            this.minOffsetBeforePushingChatBox = minOffsetBeforePushingChatBox;
+        }
+
+        public void setMinOffsetBeforePushingSubtitles(int minOffsetBeforePushingSubtitles) {
+            this.minOffsetBeforePushingSubtitles = minOffsetBeforePushingSubtitles;
         }
     }
 }
