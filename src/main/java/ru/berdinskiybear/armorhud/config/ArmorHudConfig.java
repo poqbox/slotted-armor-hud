@@ -105,10 +105,10 @@ public class ArmorHudConfig {
         this.pushSubtitles = original.pushSubtitles;
         this.slotTextures = original.slotTextures;
         this.borderLength = original.borderLength;
-        this.minOffsetBeforePushingChatBox = original.minOffsetBeforePushingChatBox;
         this.bossbarSpacing = original.bossbarSpacing;
         this.statusEffectIconSpacing = original.statusEffectIconSpacing;
         this.matchBorderAndSlotTextures = original.matchBorderAndSlotTextures;
+        this.minOffsetBeforePushingChatBox = original.minOffsetBeforePushingChatBox;
         this.minOffsetBeforePushingSubtitles = original.minOffsetBeforePushingSubtitles;
     }
 
