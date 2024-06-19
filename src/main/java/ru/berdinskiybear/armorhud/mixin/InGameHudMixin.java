@@ -101,9 +101,6 @@ public abstract class InGameHudMixin {
                     final int y;
                     final int x;
 
-                    context.getMatrices().push();
-                    context.getMatrices().translate(0, 0, 0);
-
                     // calculate the position of the armor HUD based on the config
                     switch (config.getAnchor()) {
                         case Hotbar, Bottom ->
