@@ -65,7 +65,7 @@ public abstract class InGameHudMixin {
     @Shadow
     protected abstract PlayerEntity getCameraPlayer();
 
-    @Inject(method = "renderMainHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"))
+    @Inject(method = "renderMainHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V", shift = At.Shift.AFTER))
     public void renderArmorHud(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         // add this to profiler
         this.client.getProfiler().push("armorHud");
@@ -173,14 +173,14 @@ public abstract class InGameHudMixin {
                     for (int i = 0; i < armorHudItems.size(); i++)
                         slotTextures[i] = config.getSlotTextures()[i] - 1;
                     context.getMatrices().push();
-                    context.getMatrices().translate(0, 0, -91);
+                    context.getMatrices().translate(0, 0, -92);
                     this.drawSlots(config, context, x, y, slotTextures);
                     context.getMatrices().pop();
 
                     // blend in the empty slot icons
                     if (config.isEmptyIconsShown() && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped && (!armorHudItems.isEmpty() || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)) {
                         context.getMatrices().push();
-                        context.getMatrices().translate(0, 0, -90);
+                        context.getMatrices().translate(0, 0, -91);
                         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_COLOR, GlStateManager.DstFactor.ONE, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
                         this.drawEmptySlotIcons(config, context, x, y);
                         RenderSystem.defaultBlendFunc();
@@ -189,7 +189,7 @@ public abstract class InGameHudMixin {
 
                     // draw the armour items
                     context.getMatrices().push();
-                    context.getMatrices().translate(0, 0, -1);
+                    context.getMatrices().translate(0, 0, -241);
                     this.drawArmorItems(config, context, x, y, tickCounter, playerEntity);
                     context.getMatrices().pop();
                     RenderSystem.disableBlend();
