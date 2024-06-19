@@ -46,6 +46,6 @@
   "recommends": {
     "fabric-resource-loader-v0": "*",
     "cloth-config2": ">=15.0.127",
-    "modmenu": ">=11.0.0-beta.1"
+    "modmenu": ">=11.0.0-rc.1"
   }
 }
