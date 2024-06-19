@@ -8,51 +8,48 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.berdinskiybear.armorhud.ArmorHudMod;
 import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
-import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(InGameHud.class)
 public class StatusEffectHudMixin {
-
-    @Shadow @Final private MinecraftClient client;
-
+    @Shadow @Final
+    private MinecraftClient client;
+    @Unique
     private int offset = 0;
-    private final List<ItemStack> armorHud_armorItems = new ArrayList<>(4);
 
-    @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;", shift = At.Shift.BY, by = 2))
+    @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;shouldShowIcon()Z", shift = At.Shift.AFTER))
     public void calculateOffset(DrawContext context, CallbackInfo ci) {
-        ArmorHudConfig currentConfig = this.armorHud_getCurrentArmorHudConfig();
-        if (currentConfig.isEnabled() && currentConfig.isPushStatusEffectIcons()) {
+        ArmorHudConfig config = this.getArmorHudConfig();
+        if (config.isEnabled() && config.isPushStatusEffectIcons() && config.getAnchor() == ArmorHudConfig.Anchor.Top && config.getSide() == ArmorHudConfig.Side.Right) {
             int add = 0;
-            if (currentConfig.getAnchor() == ArmorHudConfig.Anchor.Top && currentConfig.getSide() == ArmorHudConfig.Side.Right) {
-                int amount = 0;
-                PlayerEntity playerEntity = this.getCameraPlayer();
-                if (playerEntity != null) {
-                    this.armorHud_armorItems.clear();
-                    for (ItemStack itemStack : playerEntity.getInventory().armor) {
-                        if (!itemStack.isEmpty())
+            int amount = 0;
+            PlayerEntity playerEntity = this.getCameraPlayer();
+            if (playerEntity != null) {
+                if (config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)
+                    amount = 4;
+                else {
+                    List<ItemStack> armorList = playerEntity.getInventory().armor;
+                    for (ItemStack itemStack : armorList) {
+                        if (!itemStack.isEmpty()) {
                             amount++;
-                        if (!itemStack.isEmpty() || currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped)
-                            this.armorHud_armorItems.add(itemStack);
-                    }
-
-                    if (!(amount == 0 && currentConfig.getSlotsShown() != ArmorHudConfig.SlotsShown.Always_Show)) {
-                        if (currentConfig.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
-                            if (currentConfig.getSlotsShown() == ArmorHudConfig.SlotsShown.Show_Equipped)
-                                add += 22 + 20 * (amount - 1) + currentConfig.getOffsetY();
-                            else
-                                add += 82 + currentConfig.getOffsetY();
+                            if (config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped) {
+                                amount = 4;
+                                break;
+                            }
                         }
-                        else
-                            add += 22 + currentConfig.getOffsetY();
                     }
                 }
+                if (amount != 0)
+                    add += 22 + config.getOffsetY() + config.getStatusEffectIconSpacing();
+                if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
+                    add += 20 * (amount - 1);
             }
             this.offset = Math.max(add, 0);
         } else
@@ -65,15 +62,17 @@ public class StatusEffectHudMixin {
     }
 
     /**
-     * This function determines which config is supposed to be current. Usually the loaded config is considered current
-     * but if config screen is open then the preview config is used as current.
+     * Determines which config to use.
+     * If the config screen is open, the preview config is returned. Otherwise, the loaded config is returned.
      *
-     * @return Current config
+     * @return config
      */
-    private ArmorHudConfig armorHud_getCurrentArmorHudConfig() {
-        return this.client.currentScreen != null && this.client.currentScreen.getTitle() == ArmorHudMod.CONFIG_SCREEN_NAME ? ArmorHudMod.previewConfig : ArmorHudMod.getCurrentConfig();
+    @Unique
+    private ArmorHudConfig getArmorHudConfig() {
+        return this.client.currentScreen != null && this.client.currentScreen.getTitle() == ArmorHudMod.CONFIG_SCREEN_NAME ? ArmorHudMod.previewConfig : ArmorHudMod.getConfig();
     }
 
+    @Unique
     private PlayerEntity getCameraPlayer() {
         return !(this.client.getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity) this.client.getCameraEntity();
     }
