@@ -1,8 +1,8 @@
 package ru.berdinskiybear.armorhud.mixin;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.SubtitlesHud;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -24,7 +24,7 @@ public class SubtitlesHudMixin {
     private int offset = 0;
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V", ordinal = 0))
-    public void calculateOffset(DrawContext context, CallbackInfo ci) {
+    public void calculateOffset(MatrixStack matrices, CallbackInfo ci) {
         ArmorHudConfig config = this.getArmorHudConfig();
         if (config.isEnabled() && config.isPushSubtitles() && config.getAnchor() == ArmorHudConfig.Anchor.Bottom && config.getSide() == ArmorHudConfig.Side.Right) {
             int add = 0;
@@ -55,9 +55,9 @@ public class SubtitlesHudMixin {
             this.offset = 0;
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", shift = At.Shift.AFTER))
-    public void offset(DrawContext context, CallbackInfo ci) {
-        context.getMatrices().translate(0.0F, -((float) this.offset), 0.0F);
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(DDD)V", shift = At.Shift.AFTER))
+    public void offset(MatrixStack matrices, CallbackInfo ci) {
+        matrices.translate(0.0F, -((float) this.offset), 0.0F);
     }
 
     /**

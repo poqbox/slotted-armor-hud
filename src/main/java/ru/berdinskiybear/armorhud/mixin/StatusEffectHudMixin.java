@@ -2,7 +2,7 @@ package ru.berdinskiybear.armorhud.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -25,7 +25,7 @@ public class StatusEffectHudMixin {
     private int offset = 0;
 
     @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;shouldShowIcon()Z", shift = At.Shift.AFTER))
-    public void calculateOffset(DrawContext context, CallbackInfo ci) {
+    public void calculateOffset(MatrixStack matrices, CallbackInfo ci) {
         ArmorHudConfig config = this.getArmorHudConfig();
         if (config.isEnabled() && config.isPushStatusEffectIcons() && config.getAnchor() == ArmorHudConfig.Anchor.Top && config.getSide() == ArmorHudConfig.Side.Right) {
             int add = 0;

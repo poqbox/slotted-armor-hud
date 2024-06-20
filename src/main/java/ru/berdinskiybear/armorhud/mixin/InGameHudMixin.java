@@ -3,10 +3,11 @@ package ru.berdinskiybear.armorhud.mixin;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.option.AttackIndicator;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
@@ -24,9 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(InGameHud.class)
-public abstract class InGameHudMixin {
+public abstract class InGameHudMixin extends DrawableHelper {
     @Shadow @Final
     private MinecraftClient client;
+    @Shadow
+    private int scaledWidth;
+    @Shadow
+    private int scaledHeight;
     @Unique
     private static final Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
     @Unique
@@ -57,13 +62,13 @@ public abstract class InGameHudMixin {
     private final List<ItemStack> armorHudItems = new ArrayList<>(4);
 
     @Shadow
-    protected abstract void renderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed);
+    protected abstract void renderHotbarItem(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed);
 
     @Shadow
     protected abstract PlayerEntity getCameraPlayer();
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER))
-    public void armorHud_renderArmorHud(DrawContext context, float tickDelta, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
+    public void armorHud_renderArmorHud(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
         // add this to profiler
         this.client.getProfiler().push("armorHud");
         ArmorHudConfig config = this.getArmorHudConfig();
@@ -88,8 +93,6 @@ public abstract class InGameHudMixin {
 
                 // if true, then prepare and draw
                 if (!armorHudItems.isEmpty() || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show) {
-                    final int scaledWidth = context.getScaledWindowWidth();
-                    final int scaledHeight = context.getScaledWindowHeight();
                     final int armorHudLength = slot_borderedLength + ((armorHudItems.size() - 1) * slot_length);
                     final int verticalMultiplier;
                     final int sideMultiplier;
@@ -169,26 +172,23 @@ public abstract class InGameHudMixin {
                     int[] slotTextures = new int[armorHudItems.size()];
                     for (int i = 0; i < armorHudItems.size(); i++)
                         slotTextures[i] = config.getSlotTextures()[i] - 1;
-                    context.getMatrices().push();
-                    context.getMatrices().translate(0, 0, -92);
-                    this.drawSlots(config, context, x, y, slotTextures);
-                    context.getMatrices().pop();
+                    matrices.push();
+                    matrices.translate(0, 0, -91);
+                    this.drawSlots(config, matrices, x, y, slotTextures);
+                    matrices.pop();
 
                     // blend in the empty slot icons
                     if (config.isEmptyIconsShown() && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped && (!armorHudItems.isEmpty() || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)) {
-                        context.getMatrices().push();
-                        context.getMatrices().translate(0, 0, -91);
-                        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_COLOR, GlStateManager.DstFactor.ONE, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
-                        this.drawEmptySlotIcons(config, context, x, y);
+                        matrices.push();
+                        matrices.translate(0, 0, -90);
+                        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
+                        this.drawEmptySlotIcons(config, matrices, x, y);
                         RenderSystem.defaultBlendFunc();
-                        context.getMatrices().pop();
+                        matrices.pop();
                     }
 
                     // draw the armour items
-                    context.getMatrices().push();
-                    context.getMatrices().translate(0, 0, -241);
-                    this.drawArmorItems(config, context, x, y, tickDelta, playerEntity);
-                    context.getMatrices().pop();
+                    this.drawArmorItems(config, x, y, tickDelta, playerEntity);
                     RenderSystem.disableBlend();
                 }
                 armorHudItems.clear();
@@ -198,7 +198,7 @@ public abstract class InGameHudMixin {
     }
 
     @Unique
-    private void drawSlots(ArmorHudConfig config, DrawContext context, int x, int y, int[] slotTextures) {
+    private void drawSlots(ArmorHudConfig config, MatrixStack matrices, int x, int y, int[] slotTextures) {
         final ArmorHudConfig.Orientation orientation = config.getOrientation();
         final ArmorHudConfig.Style style = config.getStyle();
         final int borderLength = config.getBorderLength();
@@ -220,24 +220,24 @@ public abstract class InGameHudMixin {
         }
         // draw slot texture
         if (slotAmount == 1)
-            context.drawTexture(WIDGETS_TEXTURE, x + 1 + slotOffsetUV, y + 1 + slotOffsetUV, slotU[slotTextures[0]] + slotOffsetUV, 1 + slotOffsetUV, slotLength, slotLength);
+            drawTexture(matrices, x + 1 + slotOffsetUV, y + 1 + slotOffsetUV, slotU[slotTextures[0]] + slotOffsetUV, 1 + slotOffsetUV, slotLength, slotLength);
         else {
             if (orientation == ArmorHudConfig.Orientation.Vertical) {
                 for (int i = 0; i < slotAmount; i++)
                     if (i == 0)
-                        context.drawTexture(WIDGETS_TEXTURE, x + 1 + slotOffsetUV, y + 1 + slotOffsetUV, slotU[slotTextures[0]] + slotOffsetUV, 1 + slotOffsetUV, slotLength, edgeSlotLength);
+                        drawTexture(matrices, x + 1 + slotOffsetUV, y + 1 + slotOffsetUV, slotU[slotTextures[0]] + slotOffsetUV, 1 + slotOffsetUV, slotLength, edgeSlotLength);
                     else if (i == slotAmount - 1)
-                        context.drawTexture(WIDGETS_TEXTURE, x + 1 + slotOffsetUV, y + 1 + i * slot_length, slotU[slotTextures[i]] + slotOffsetUV, 1, slotLength, edgeSlotLength);
+                        drawTexture(matrices, x + 1 + slotOffsetUV, y + 1 + i * slot_length, slotU[slotTextures[i]] + slotOffsetUV, 1, slotLength, edgeSlotLength);
                     else
-                        context.drawTexture(WIDGETS_TEXTURE, x + 1 + slotOffsetUV, y + 1 + i * slot_length, slotU[slotTextures[i]] + slotOffsetUV, 1, slotLength, slot_length);
+                        drawTexture(matrices, x + 1 + slotOffsetUV, y + 1 + i * slot_length, slotU[slotTextures[i]] + slotOffsetUV, 1, slotLength, slot_length);
             } else {
                 for (int i = 0; i < slotAmount; i++)
                     if (i == 0)
-                        context.drawTexture(WIDGETS_TEXTURE, x + 1 + slotOffsetUV, y + 1 + slotOffsetUV, slotU[slotTextures[0]] + slotOffsetUV, 1 + slotOffsetUV, edgeSlotLength, slotLength);
+                        drawTexture(matrices, x + 1 + slotOffsetUV, y + 1 + slotOffsetUV, slotU[slotTextures[0]] + slotOffsetUV, 1 + slotOffsetUV, edgeSlotLength, slotLength);
                     else if (i == slotAmount - 1)
-                        context.drawTexture(WIDGETS_TEXTURE, x + 1 + i * slot_length, y + 1 + slotOffsetUV, slotU[slotTextures[i]], 1 + slotOffsetUV, edgeSlotLength, slotLength);
+                        drawTexture(matrices, x + 1 + i * slot_length, y + 1 + slotOffsetUV, slotU[slotTextures[i]], 1 + slotOffsetUV, edgeSlotLength, slotLength);
                     else
-                        context.drawTexture(WIDGETS_TEXTURE, x + 1 + i * slot_length, y + 1 + slotOffsetUV, slotU[slotTextures[i]], 1 + slotOffsetUV, slot_length, slotLength);
+                        drawTexture(matrices, x + 1 + i * slot_length, y + 1 + slotOffsetUV, slotU[slotTextures[i]], 1 + slotOffsetUV, slot_length, slotLength);
             }
         }
 
@@ -256,42 +256,42 @@ public abstract class InGameHudMixin {
                     borderTextureX1 = slotU[slotTextures[0]] + borderLength - 1;
                 if (slotAmount == 1) {
                     // side borders
-                    context.drawTexture(WIDGETS_TEXTURE, x, y + borderLength, 0, borderLength, borderLength, slotLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + endPieceOffset, y + borderLength, borderTextureX2, borderLength, borderLength, slotLength);
+                    drawTexture(matrices, x, y + borderLength, 0, borderLength, borderLength, slotLength);
+                    drawTexture(matrices, x + endPieceOffset, y + borderLength, borderTextureX2, borderLength, borderLength, slotLength);
                 } else {
                     for (int i = 0; i < slotAmount; i++) {
                         // side borders
                         if (i == 0) {
-                            context.drawTexture(WIDGETS_TEXTURE, x, y + borderLength, 0, borderLength, borderLength, edgePieceLength);
-                            context.drawTexture(WIDGETS_TEXTURE, x + endPieceOffset, y + borderLength, borderTextureX2, borderLength, borderLength, edgePieceLength);
+                            drawTexture(matrices, x, y + borderLength, 0, borderLength, borderLength, edgePieceLength);
+                            drawTexture(matrices, x + endPieceOffset, y + borderLength, borderTextureX2, borderLength, borderLength, edgePieceLength);
                         } else if (i == slotAmount - 1) {
-                            context.drawTexture(WIDGETS_TEXTURE, x, y + 1 + i * slot_length, 0, 1, borderLength, edgePieceLength);
-                            context.drawTexture(WIDGETS_TEXTURE, x + endPieceOffset, y + 1 + i * slot_length, borderTextureX2, 1, borderLength, edgePieceLength);
+                            drawTexture(matrices, x, y + 1 + i * slot_length, 0, 1, borderLength, edgePieceLength);
+                            drawTexture(matrices, x + endPieceOffset, y + 1 + i * slot_length, borderTextureX2, 1, borderLength, edgePieceLength);
                         } else {
-                            context.drawTexture(WIDGETS_TEXTURE, x, y + 1 + i * slot_length, 0, 1, borderLength, slot_length);
-                            context.drawTexture(WIDGETS_TEXTURE, x + endPieceOffset, y + 1 + i * slot_length, borderTextureX2, 1, borderLength, slot_length);
+                            drawTexture(matrices, x, y + 1 + i * slot_length, 0, 1, borderLength, slot_length);
+                            drawTexture(matrices, x + endPieceOffset, y + 1 + i * slot_length, borderTextureX2, 1, borderLength, slot_length);
                         }
                     }
                 }
                 if (style == ArmorHudConfig.Style.Rounded) {
                     // top-bottom borders
-                    context.drawTexture(WIDGETS_TEXTURE, x, y, offhandU, offhandV, slot_borderedLength, borderLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x, y + endBorderOffset, offhandU, offhandV + endPieceOffset, slot_borderedLength, borderLength);
+                    drawTexture(matrices, x, y, offhandU, offhandV, slot_borderedLength, borderLength);
+                    drawTexture(matrices, x, y + endBorderOffset, offhandU, offhandV + endPieceOffset, slot_borderedLength, borderLength);
                 } else {
                     // top border
-                    context.drawTexture(WIDGETS_TEXTURE, x, y, 0, 0, borderLength, borderLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + borderLength, y, borderTextureX1, 0, slotLength, borderLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + endPieceOffset, y, borderTextureX2, 0, borderLength, borderLength);
+                    drawTexture(matrices, x, y, 0, 0, borderLength, borderLength);
+                    drawTexture(matrices, x + borderLength, y, borderTextureX1, 0, slotLength, borderLength);
+                    drawTexture(matrices, x + endPieceOffset, y, borderTextureX2, 0, borderLength, borderLength);
                     // bottom border
-                    context.drawTexture(WIDGETS_TEXTURE, x, y + endBorderOffset, 0, borderTextureY2, borderLength, borderLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + borderLength, y + endBorderOffset, borderTextureX1, borderTextureY2, slotLength, borderLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + endPieceOffset, y + endBorderOffset, borderTextureX2, borderTextureY2, borderLength, borderLength);
+                    drawTexture(matrices, x, y + endBorderOffset, 0, borderTextureY2, borderLength, borderLength);
+                    drawTexture(matrices, x + borderLength, y + endBorderOffset, borderTextureX1, borderTextureY2, slotLength, borderLength);
+                    drawTexture(matrices, x + endPieceOffset, y + endBorderOffset, borderTextureX2, borderTextureY2, borderLength, borderLength);
                 }
             } else {
                 if (slotAmount == 1) {
                     // top-bottom borders
-                    context.drawTexture(WIDGETS_TEXTURE, x + borderLength, y, borderTextureX1, 0, slotLength, borderLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + borderLength, y + endPieceOffset, borderTextureX1, borderTextureY2, slotLength, borderLength);
+                    drawTexture(matrices, x + borderLength, y, borderTextureX1, 0, slotLength, borderLength);
+                    drawTexture(matrices, x + borderLength, y + endPieceOffset, borderTextureX1, borderTextureY2, slotLength, borderLength);
                 } else {
                     int borderTextureX = slotU[0];
                     for (int i = 0; i < slotAmount; i++) {
@@ -299,37 +299,37 @@ public abstract class InGameHudMixin {
                         if (i > 0 && matchBorderAndSlotTextures)
                             borderTextureX = slotU[slotTextures[i]];
                         if (i == 0) {
-                            context.drawTexture(WIDGETS_TEXTURE, x + borderLength, y, borderTextureX1, 0, edgePieceLength, borderLength);
-                            context.drawTexture(WIDGETS_TEXTURE, x + borderLength, y + endPieceOffset, borderTextureX1, borderTextureY2, edgePieceLength, borderLength);
+                            drawTexture(matrices, x + borderLength, y, borderTextureX1, 0, edgePieceLength, borderLength);
+                            drawTexture(matrices, x + borderLength, y + endPieceOffset, borderTextureX1, borderTextureY2, edgePieceLength, borderLength);
                         } else if (i == slotAmount - 1) {
-                            context.drawTexture(WIDGETS_TEXTURE, x + 1 + i * slot_length, y, borderTextureX, 0, edgePieceLength, borderLength);
-                            context.drawTexture(WIDGETS_TEXTURE, x + 1 + i * slot_length, y + endPieceOffset, borderTextureX, borderTextureY2, edgePieceLength, borderLength);
+                            drawTexture(matrices, x + 1 + i * slot_length, y, borderTextureX, 0, edgePieceLength, borderLength);
+                            drawTexture(matrices, x + 1 + i * slot_length, y + endPieceOffset, borderTextureX, borderTextureY2, edgePieceLength, borderLength);
                         } else {
-                            context.drawTexture(WIDGETS_TEXTURE, x + 1 + i * slot_length, y, borderTextureX, 0, slot_length, borderLength);
-                            context.drawTexture(WIDGETS_TEXTURE, x + 1 + i * slot_length, y + endPieceOffset, borderTextureX, borderTextureY2, slot_length, borderLength);
+                            drawTexture(matrices, x + 1 + i * slot_length, y, borderTextureX, 0, slot_length, borderLength);
+                            drawTexture(matrices, x + 1 + i * slot_length, y + endPieceOffset, borderTextureX, borderTextureY2, slot_length, borderLength);
                         }
                     }
                 }
                 if (style == ArmorHudConfig.Style.Rounded) {
                     // left-right borders
-                    context.drawTexture(WIDGETS_TEXTURE, x, y, offhandU, offhandV, borderLength, slot_borderedLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + endBorderOffset, y, offhandU + endPieceOffset, offhandV, borderLength, slot_borderedLength);
+                    drawTexture(matrices, x, y, offhandU, offhandV, borderLength, slot_borderedLength);
+                    drawTexture(matrices, x + endBorderOffset, y, offhandU + endPieceOffset, offhandV, borderLength, slot_borderedLength);
                 } else {
                     // left border
-                    context.drawTexture(WIDGETS_TEXTURE, x, y, 0, 0, borderLength, borderLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x, y + borderLength, 0, borderTextureY1, borderLength, slotLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x, y + endPieceOffset, 0, borderTextureY2, borderLength, borderLength);
+                    drawTexture(matrices, x, y, 0, 0, borderLength, borderLength);
+                    drawTexture(matrices, x, y + borderLength, 0, borderTextureY1, borderLength, slotLength);
+                    drawTexture(matrices, x, y + endPieceOffset, 0, borderTextureY2, borderLength, borderLength);
                     // right border
-                    context.drawTexture(WIDGETS_TEXTURE, x + endBorderOffset, y, borderTextureX2, 0, borderLength, borderLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + endBorderOffset, y + borderLength, borderTextureX2, borderTextureY1, borderLength, slotLength);
-                    context.drawTexture(WIDGETS_TEXTURE, x + endBorderOffset, y + endPieceOffset, borderTextureX2, borderTextureY2, borderLength, borderLength);
+                    drawTexture(matrices, x + endBorderOffset, y, borderTextureX2, 0, borderLength, borderLength);
+                    drawTexture(matrices, x + endBorderOffset, y + borderLength, borderTextureX2, borderTextureY1, borderLength, slotLength);
+                    drawTexture(matrices, x + endBorderOffset, y + endPieceOffset, borderTextureX2, borderTextureY2, borderLength, borderLength);
                 }
             }
         }
     }
 
     @Unique
-    private void drawEmptySlotIcons(ArmorHudConfig config, DrawContext context, int x, int y) {
+    private void drawEmptySlotIcons(ArmorHudConfig config, MatrixStack matrices, int x, int y) {
         for (int i = 0; i < armorHudItems.size(); i++) {
             if (armorHudItems.get(i).isEmpty()) {
                 Identifier spriteId = switch (i) {
@@ -340,24 +340,24 @@ public abstract class InGameHudMixin {
                     default -> throw new IllegalStateException("Unexpected value: " + i);
                 };
                 Sprite sprite = this.client.getSpriteAtlas(BLOCK_ATLAS_TEXTURE).apply(spriteId);
-                RenderSystem.setShaderTexture(0, sprite.getAtlasId());
+                RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
 
                 int slotOffset = config.isReversed() ? i * slot_length : (armorHudItems.size() - i - 1) * slot_length;
                 switch (config.getOrientation()) {
-                    case Horizontal -> context.drawSprite(x + 3 + slotOffset, y + 3, 0, 16, 16, sprite);
-                    case Vertical -> context.drawSprite(x + 3, y + 3 + slotOffset, 0, 16, 16, sprite);
+                    case Horizontal -> drawSprite(matrices, x + 3 + slotOffset, y + 3, 0, 16, 16, sprite);
+                    case Vertical -> drawSprite(matrices, x + 3, y + 3 + slotOffset, 0, 16, 16, sprite);
                 }
             }
         }
     }
 
     @Unique
-    private void drawArmorItems(ArmorHudConfig config, DrawContext context, int x, int y, float tickDelta, PlayerEntity playerEntity) {
+    private void drawArmorItems(ArmorHudConfig config, int x, int y, float tickDelta, PlayerEntity playerEntity) {
         for (int i = 0; i < armorHudItems.size(); i++) {
             int slotOffset = config.isReversed() ? i * slot_length : (armorHudItems.size() - i - 1) * slot_length;
             switch (config.getOrientation()) {
-                case Horizontal -> this.renderHotbarItem(context, x + 3 + slotOffset, y + 3, tickDelta, playerEntity, armorHudItems.get(i), i + 1);
-                case Vertical -> this.renderHotbarItem(context, x + 3, y + 3 + slotOffset, tickDelta, playerEntity, armorHudItems.get(i), i + 1);
+                case Horizontal -> this.renderHotbarItem(x + 3 + slotOffset, y + 3, tickDelta, playerEntity, armorHudItems.get(i), i + 1);
+                case Vertical -> this.renderHotbarItem(x + 3, y + 3 + slotOffset, tickDelta, playerEntity, armorHudItems.get(i), i + 1);
             }
         }
     }
