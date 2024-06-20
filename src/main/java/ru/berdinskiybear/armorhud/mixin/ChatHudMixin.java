@@ -23,8 +23,8 @@ public class ChatHudMixin {
     @Unique
     private int offset = 0;
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(DDD)V", ordinal = 0, shift = At.Shift.AFTER))
-    public void calculateOffset(MatrixStack matrices, int tickDelta, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0, shift = At.Shift.AFTER))
+    public void calculateOffset(MatrixStack matrices, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
         ArmorHudConfig config = this.getArmorHudConfig();
         if (config.isEnabled() && config.isPushChatBox() && config.getAnchor() == ArmorHudConfig.Anchor.Bottom && config.getSide() == ArmorHudConfig.Side.Left && config.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
             int add = 0;
@@ -55,8 +55,8 @@ public class ChatHudMixin {
             this.offset = 0;
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(DDD)V", shift = At.Shift.AFTER, ordinal = 0))
-    public void offset(MatrixStack matrices, int tickDelta, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", shift = At.Shift.AFTER, ordinal = 0))
+    public void offset(MatrixStack matrices, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
         matrices.translate(0.0F, -((float) this.offset), 0.0F);
     }
 

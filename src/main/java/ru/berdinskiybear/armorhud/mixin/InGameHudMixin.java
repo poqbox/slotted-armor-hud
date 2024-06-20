@@ -181,7 +181,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
                     if (config.isEmptyIconsShown() && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped && (!armorHudItems.isEmpty() || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)) {
                         matrices.push();
                         matrices.translate(0, 0, -90);
-                        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_COLOR, GlStateManager.DstFactor.ONE, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
+                        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
                         this.drawEmptySlotIcons(config, matrices, x, y);
                         RenderSystem.defaultBlendFunc();
                         matrices.pop();
@@ -340,7 +340,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
                     default -> throw new IllegalStateException("Unexpected value: " + i);
                 };
                 Sprite sprite = this.client.getSpriteAtlas(BLOCK_ATLAS_TEXTURE).apply(spriteId);
-                RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
+                RenderSystem.setShaderTexture(0, sprite.getAtlasId());
 
                 int slotOffset = config.isReversed() ? i * slot_length : (armorHudItems.size() - i - 1) * slot_length;
                 switch (config.getOrientation()) {
