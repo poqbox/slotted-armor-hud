@@ -1,7 +1,8 @@
 package ru.berdinskiybear.armorhud.mixin;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.BossBarHud;
+import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -9,20 +10,23 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.berdinskiybear.armorhud.ArmorHudMod;
 import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
 import java.util.List;
 
-@Mixin(BossBarHud.class)
-public class BossbarHudMixin {
+@Mixin(ChatHud.class)
+public class ChatHudMixin {
     @Shadow @Final
     private MinecraftClient client;
+    @Unique
+    private int offset = 0;
 
-    @ModifyVariable(method = "render", at = @At(value = "STORE", ordinal = 0), ordinal = 1)
-    public int calculateOffset(int offset) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0, shift = At.Shift.AFTER))
+    public void calculateOffset(MatrixStack matrices, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
         ArmorHudConfig config = this.getArmorHudConfig();
-        if (config.isEnabled() && config.isPushBossbars() && config.getAnchor() == ArmorHudConfig.Anchor.Top_Center) {
+        if (config.isEnabled() && config.isPushChatBox() && config.getAnchor() == ArmorHudConfig.Anchor.Bottom && config.getSide() == ArmorHudConfig.Side.Left && config.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
             int add = 0;
             int amount = 0;
             PlayerEntity playerEntity = this.getCameraPlayer();
@@ -41,14 +45,19 @@ public class BossbarHudMixin {
                         }
                     }
                 }
-                if (amount != 0)
-                    add += 22 + config.getOffsetY() + config.getBossbarSpacing();
+                if (amount != 0 && config.getOffsetY() > config.getMinOffsetBeforePushingChatBox())
+                    add += config.getOffsetY() - config.getMinOffsetBeforePushingChatBox();
                 if (config.getOrientation() == ArmorHudConfig.Orientation.Vertical)
                     add += 20 * (amount - 1);
             }
-            return offset + Math.max(add, 0);
+            this.offset = Math.max(add, 0);
         } else
-            return offset;
+            this.offset = 0;
+    }
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", shift = At.Shift.AFTER, ordinal = 0))
+    public void offset(MatrixStack matrices, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
+        matrices.translate(0.0F, -((float) this.offset), 0.0F);
     }
 
     /**

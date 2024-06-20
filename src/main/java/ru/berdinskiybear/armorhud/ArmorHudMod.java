@@ -9,33 +9,29 @@ import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
 public final class ArmorHudMod {
     public static final String MOD_ID = "slotted_armor_hud";
     public static final String MOD_NAME = "Slotted Armor HUD";
-
     public static final String FABRIC_RESOURCE_LOADER_ID = "fabric-resource-loader-v0";
     public static final String CLOTH_CONFIG_ID = "cloth-config2";
-
     public static final Text CONFIG_SCREEN_NAME = Text.translatable("armorHud.configScreen.title");
-
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
     public static ArmorHudConfig.MutableConfig temporaryConfig;
     public static ArmorHudConfig.MutableConfig previewConfig = new ArmorHudConfig.MutableConfig();
+    private static ArmorHudConfig config;
 
-    private static ArmorHudConfig currentConfig;
-
-    public static ArmorHudConfig getCurrentConfig() {
-        return currentConfig;
+    public static ArmorHudConfig getConfig() {
+        return config;
     }
 
-    public static void setCurrentConfig(ArmorHudConfig currentConfig) {
-        ArmorHudMod.currentConfig = currentConfig;
+    public static void setConfig(ArmorHudConfig config) {
+        ArmorHudMod.config = config;
     }
 
-    public static void writeCurrentConfig() {
-        ArmorHudConfig.writeConfigFile(ArmorHudMod.getCurrentConfig());
+    public static void writeConfig() {
+        ArmorHudConfig.writeConfigFile(ArmorHudMod.getConfig());
     }
 
-    public static void readCurrentConfig() {
-        ArmorHudMod.setCurrentConfig(ArmorHudConfig.readConfigFile());
+    public static void readConfig() {
+        ArmorHudMod.setConfig(ArmorHudConfig.readConfigFile());
     }
 
     public static void log(String message) {
