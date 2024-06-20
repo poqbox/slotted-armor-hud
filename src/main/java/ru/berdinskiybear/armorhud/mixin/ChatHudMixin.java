@@ -1,8 +1,8 @@
 package ru.berdinskiybear.armorhud.mixin;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -23,8 +23,8 @@ public class ChatHudMixin {
     @Unique
     private int offset = 0;
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;getMatrices()Lnet/minecraft/client/util/math/MatrixStack;", ordinal = 0, shift = At.Shift.AFTER))
-    public void calculateOffset(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(DDD)V", ordinal = 0, shift = At.Shift.AFTER))
+    public void calculateOffset(MatrixStack matrices, int tickDelta, CallbackInfo ci) {
         ArmorHudConfig config = this.getArmorHudConfig();
         if (config.isEnabled() && config.isPushChatBox() && config.getAnchor() == ArmorHudConfig.Anchor.Bottom && config.getSide() == ArmorHudConfig.Side.Left && config.getOrientation() == ArmorHudConfig.Orientation.Vertical) {
             int add = 0;
@@ -55,9 +55,9 @@ public class ChatHudMixin {
             this.offset = 0;
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", shift = At.Shift.AFTER, ordinal = 0))
-    public void offset(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
-        context.getMatrices().translate(0.0F, -((float) this.offset), 0.0F);
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(DDD)V", shift = At.Shift.AFTER, ordinal = 0))
+    public void offset(MatrixStack matrices, int tickDelta, CallbackInfo ci) {
+        matrices.translate(0.0F, -((float) this.offset), 0.0F);
     }
 
     /**

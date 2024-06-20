@@ -79,7 +79,7 @@ public class ArmorHudConfig {
         this.pushStatusEffectIcons = true;
         this.pushSubtitles = true;
         this.slotTextures = new int[]{1, 2, 3, 4};
-        this.borderLength = 1;
+        this.borderLength = 3;
         this.matchBorderAndSlotTextures = true;
         this.bossbarSpacing = 0;
         this.statusEffectIconSpacing = 0;
