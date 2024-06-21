@@ -121,7 +121,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
                         case Adhere -> {
                             if ((playerEntity.getMainArm() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Left || playerEntity.getMainArm() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Right) && !playerEntity.getOffHandStack().isEmpty())
                                 addedHotbarOffset = offhandSlot_offset;
-                            else if ((playerEntity.getMainArm() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right || playerEntity.getMainArm() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left) && this.client.options.getAttackIndicator().getValue() == AttackIndicator.HOTBAR)
+                            else if ((playerEntity.getMainArm() == Arm.RIGHT && config.getSide() == ArmorHudConfig.Side.Right || playerEntity.getMainArm() == Arm.LEFT && config.getSide() == ArmorHudConfig.Side.Left) && this.client.options.attackIndicator == AttackIndicator.HOTBAR)
                                 addedHotbarOffset = attackIndicator_offset;
                             else
                                 addedHotbarOffset = 0;
@@ -181,7 +181,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
                     if (config.isEmptyIconsShown() && config.getSlotsShown() != ArmorHudConfig.SlotsShown.Show_Equipped && (!armorHudItems.isEmpty() || config.getSlotsShown() == ArmorHudConfig.SlotsShown.Always_Show)) {
                         matrices.push();
                         matrices.translate(0, 0, -90);
-                        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_COLOR, GlStateManager.DstFactor.ONE, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
+                        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
                         this.drawEmptySlotIcons(config, matrices, x, y);
                         RenderSystem.defaultBlendFunc();
                         matrices.pop();
