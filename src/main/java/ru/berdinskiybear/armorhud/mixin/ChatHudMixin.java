@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.berdinskiybear.armorhud.ArmorHudMod;
 import ru.berdinskiybear.armorhud.config.ArmorHudConfig;
@@ -58,6 +59,11 @@ public class ChatHudMixin {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", shift = At.Shift.AFTER, ordinal = 0))
     public void offset(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
         context.getMatrices().translate(0.0F, -((float) this.offset), 0.0F);
+    }
+
+    @ModifyVariable(method = "toChatLineY", at = @At(value = "STORE", ordinal = 0), ordinal = 1)
+    public double offsetYConversion(double d) {
+        return d - this.offset;
     }
 
     /**
