@@ -1,0 +1,92 @@
+name: Bug report
+description: Open an issue regarding strange behavior.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes: |
+      **Some notes before opening an issue:**
+      Are there similar issues on [the issue tracker](https://github.com/poqli/slotted-armor-hud/issues)? If so, consider adding your information to that instead.
+      Are your mods updated? The issue might have been resolved in a later version.
+      Does the issue only occur with other mods installed? If so, try to narrow down the list of mods to only those causing the issue. It will make fixing it easier :)
+
+
+  - type: dropdown
+    id: bug-type
+    attributes:
+      label: Type of bug
+      description: |
+        Choose a bug from the dropdown that best describes the issue.
+      options:
+        - Crash
+        - Unexpected behaviour
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue description
+      description: |
+        Provide a description of the issue and when it occurs, in as much detail as possible.
+        If you are reporting unexpected behavior, provide both the unexpected behavior and the expected behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: |
+        Provide a list of steps that causes the bug to occur, in as much detail as possible.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: crash-report
+    attributes:
+      label: Crash report
+      description: |
+        If you are reporting a crash, provide the crash report.
+        This can be found in Minecraft's `crash-reports` folder.
+      placeholder: Upload or paste the crash report here (if applicable)
+      render: bash
+    validations:
+      required: false
+
+  - type: textarea
+    id: mod-list
+    attributes:
+      label: List of mods
+      description: |
+        If the bug only occurs with other mods installed, provide a list of the mods' filename.
+        This can be found in Minecraft's `mods` folder.
+    validations:
+      required: false
+
+  - type: input
+    id: mod-ver
+    attributes:
+      label: Mod version
+      description: |
+        Provide the slotted-armor-hud version being used.
+        This can be found at the end of the mod's filename.
+      placeholder: e.g., v1.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: mc-ver
+    attributes:
+      label: Minecraft version
+      description: |
+        Provide the Minecraft version being used.
+        This can be found at the bottom-left corner of the main menu in game.
+      placeholder: e.g., 1.20.1
+    validations:
+      required: true
