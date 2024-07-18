@@ -56,6 +56,7 @@ body:
         If you are reporting a crash, provide the crash report.
         This can be found in Minecraft's `crash-reports` folder.
       placeholder: Upload or paste the crash report here (if applicable)
+      render: bash
     validations:
       required: false
 
