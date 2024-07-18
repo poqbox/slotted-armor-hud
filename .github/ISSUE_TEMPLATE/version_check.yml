@@ -1,0 +1,43 @@
+name: Version check
+description: Open an issue for porting the mod to a newer Minecraft version.
+title: "[Version check]: "
+body:
+  - type: markdown
+    attributes: 
+      value: |
+        ## Some notes before opening an issue:
+        **Is there a similar issue on the [issue tracker](https://github.com/poqli/slotted-armor-hud/issues)?** If so, consider adding your information to that instead.
+        <br />
+
+  - type: textarea
+    id: results
+    attributes:
+      label: Results
+      description: |
+        Did you encounter an issue when installing the mod on a newer Minecraft version?
+        If so, list them here.
+    validations:
+      required: true
+
+  - type: input
+    id: mc-ver
+    attributes:
+      label: Minecraft version
+      description: |
+        Provide the Minecraft version being tested on.
+        This can be found at the bottom-left corner of the main menu in game.
+      placeholder: e.g., 1.20.2
+    validations:
+      required: true
+
+  - type: input
+    id: mod-ver
+    attributes:
+      label: Mod version
+      description: |
+        Provide both the slotted-armor-hud version being used and the Minecraft version it was made for.
+        The mod version can be found at the end of the mod's filename.
+        The MC version can be found at the bottom-left corner of the main menu in game.
+      placeholder: e.g., v1.0.0+mc1.20.1
+    validations:
+      required: true
