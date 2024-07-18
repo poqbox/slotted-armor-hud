@@ -15,7 +15,7 @@ body:
       label: Results
       description: |
         Did you encounter an issue when installing the mod on a newer Minecraft version?
-        If so, list them here.
+        If you encountered an issue, describe it here.
     validations:
       required: true
 
