@@ -16,12 +16,12 @@ body:
     id: bug-type
     attributes:
       label: Type of bug
-      description: |
-        Choose a bug from the dropdown that best describes the issue.
       options:
         - Crash
         - Unexpected behaviour
         - Other
+      description: |
+        Choose a bug from the dropdown that best describes the issue.
     validations:
       required: true
 
