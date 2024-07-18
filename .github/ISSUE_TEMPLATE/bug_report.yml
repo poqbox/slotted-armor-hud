@@ -41,10 +41,6 @@ body:
       label: Steps to reproduce
       description: |
         Provide a list of steps that causes the bug to occur, in as much detail as possible.
-      placeholder: |
-        1. ...
-        2. ...
-        3. ...
     validations:
       required: true
 
