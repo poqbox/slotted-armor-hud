@@ -1,6 +1,6 @@
 name: Incompatibility report
 description: Open an issue regarding unexpected behavior when used with another mod.
-title: "[Incomp]: "
+title: "[Incompatibility]: "
 labels: ["bug", "incompatibility"]
 body:
   - type: markdown
