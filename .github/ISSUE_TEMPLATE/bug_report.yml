@@ -6,22 +6,21 @@ body:
   - type: markdown
     attributes: 
       value: |
-        **Some notes before opening an issue:**
+        ### Some notes before opening an issue:
         Are there similar issues on [the issue tracker](https://github.com/poqli/slotted-armor-hud/issues)? If so, consider adding your information to that instead.
         Are your mods updated? The issue might have been resolved in a later version.
         Does the issue only occur with other mods installed? If so, try to narrow down the list of mods to only those causing the issue. It will make fixing it easier :)
-
 
   - type: dropdown
     id: bug-type
     attributes:
       label: Type of bug
+      description: |
+        Choose a bug from the dropdown that best describes the issue.
       options:
         - Crash
         - Unexpected behaviour
         - Other
-      description: |
-        Choose a bug from the dropdown that best describes the issue.
     validations:
       required: true
 
